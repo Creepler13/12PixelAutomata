@@ -8,7 +8,8 @@ var frame = 0;
 var time = 0;
 
 var materials = {
-    "water": { "color": "#084596", "amount": 0 }
+    "water": { "color": "#084596", "amount": 0 },
+    "energy": { "color": document.getElementById("energy"), "amount": 0 }
 }
 var buildings = {
     "0": { "name": "empty", "color": document.getElementById("empty") },
@@ -58,7 +59,6 @@ function gameloop() {
         frame = 0;
         time++;
     }
-
 
     for (let index = 0; index < map.length; index++) {
         for (let indexy = 0; indexy < map[0].length; indexy++) {
