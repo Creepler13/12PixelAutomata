@@ -50,7 +50,7 @@ class Tile {
                 this.hasInput = true;
                 this.spaceType = [];
                 this.update = () => {
-                    if (this.space.length == 0) {
+                    if (this.space.length != 0) {
                         materials[this.space[0]].amount++;
                         this.space = [];
                     }
