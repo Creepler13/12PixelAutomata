@@ -8,14 +8,15 @@ var frame = 0;
 var time = 0;
 
 var materials = {
-    "water": { "color": "#084596", "amount": 0 },
+    "water": { "color": document.getElementById("water"), "amount": 0 },
     "energy": { "color": document.getElementById("energy"), "amount": 0 }
 }
 var buildings = {
     "0": { "name": "empty", "color": document.getElementById("empty") },
     "1": { "name": "water-collector", "color": document.getElementById("water-collector") },
     "2": { "name": "mover", "color": document.getElementById("mover") },
-    "3": { "name": "base", "color": document.getElementById("base") }
+    "3": { "name": "base", "color": document.getElementById("base") },
+    "4": { "name": "transformator", "color": document.getElementById("transformator") }
 }
 var facings = {
     "0": "Up",
@@ -28,7 +29,7 @@ var facing = 0;
 var facingsSize = [];
 for (let k in facings) facingsSize.push(k);
 var maxSelectetFacing = facingsSize.length - 1;
-console.log(maxSelectetFacing)
+console.log(maxSelectetFacing);
 facingDisplay.textContent = " Facing: " + facings[facing];
 
 
@@ -53,12 +54,6 @@ setInterval(gameloop, 50);
 
 
 function gameloop() {
-    frame++;
-
-    if (frame == 20) {
-        frame = 0;
-        time++;
-    }
 
     for (let index = 0; index < map.length; index++) {
         for (let indexy = 0; indexy < map[0].length; indexy++) {
@@ -78,12 +73,19 @@ function gameloop() {
             ctx.rotate(- facingToAngle(tile.facing));
             ctx.translate(-(index * 12 + 6), -(indexy * 12 + 6));
 
-            if (tile.space != "empty") {
-                ctx.fillStyle = materials[tile.space].color
-                ctx.fillRect(index * 12 + 2, indexy * 12 + 2, 8, 8);
+            if (tile.space.length != 0) {
+
+                switch (tile.space.length) {
+                    case 1:
+                        ctx.drawImage(materials[tile.space[0]].color, index * 12 + 2, indexy * 12 + 2, 8, 8);
+                        break;
+                    case 2:
+                        ctx.drawImage(materials[tile.space[0]].color, index * 12 + 2, indexy * 12 + 6, 8, 4);
+                        ctx.drawImage(materials[tile.space[1]].color, index * 12 + 2, indexy * 12 + 6, 8, 4);
+                        break;
+                }
             }
         }
-
     }
 
     ctx.fillStyle = "#a32020";
