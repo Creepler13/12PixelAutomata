@@ -16,7 +16,9 @@ var buildings = {
     "1": { "name": "water-collector", "color": document.getElementById("water-collector") },
     "2": { "name": "mover", "color": document.getElementById("mover") },
     "3": { "name": "base", "color": document.getElementById("base") },
-    "4": { "name": "transformator", "color": document.getElementById("transformator") }
+    "4": { "name": "transformator", "color": document.getElementById("transformator") },
+    "5": { "name": "spliiter", "color": document.getElementById("splitter") },
+    "6": { "name": "clear" }
 }
 var facings = {
     "0": "Up",
@@ -35,7 +37,7 @@ facingDisplay.textContent = " Facing: " + facings[facing];
 
 var x = 0;
 var y = 0;
-var selectet = 1;
+var selectet = 0;
 var buildingsSize = [];
 for (let k in buildings) buildingsSize.push(k);
 var maxSelectet = buildingsSize.length - 1;
@@ -126,11 +128,15 @@ document.onkeyup = function KeyEventHandler(e) {
             }
             break;
         case 32://space
-            map[x][y] = new Tile(x, y, selectet, facing);
+            if (selectet == 6) {
+                map[x][y].space = [];
+            } else {
+                map[x][y] = new Tile(x, y, selectet, facing);
+            }
             break;
         case 81://q
             if (selectet == maxSelectet) {
-                selectet = 1;
+                selectet = 0;
             } else {
                 selectet++;
             }
@@ -151,15 +157,24 @@ function facingToAngle(facing) {
     switch (facing) {
         case 0:
             return 90 * Math.PI / 180;
-            break;
         case 2:
             return -90 * Math.PI / 180;
-            break;
         case 3:
             return 0;
-            break;
         case 1:
             return -180 * Math.PI / 180;
-            break;
+    }
+}
+
+function reverseFacing(facing) {
+    switch (facing) {
+        case 0:
+            return 2;
+        case 2:
+            return 0;
+        case 3:
+            return 1;
+        case 1:
+            return 3;
     }
 }
