@@ -15,7 +15,7 @@ var materials = {
 var buildings = {
     "0": { "1": { "name": "empty", "color": document.getElementById("empty"), "price": 0, "updateCooldown": 0 } },
     "1": { "1": { "name": "water-collector", "color": document.getElementById("water-collector"), "price": 20, "updateCooldown": 40 } },
-    "2": { "1": { "name": "mover", "color": document.getElementById("mover"), "price": 2, "updateCooldown": 20 } },
+    "2": { "1": { "name": "mover", "color": document.getElementById("mover"), "price": 2, "updateCooldown": 20 }, "2": { "name": "faster mover", "color": document.getElementById("faster mover"), "price": 10, "updateCooldown": 10 } },
     "3": { "1": { "name": "base", "color": document.getElementById("base"), "price": 100, "updateCooldown": 5 } },
     "4": { "1": { "name": "factory", "color": document.getElementById("transformator"), "price": 50, "updateCooldown": 60 } },
     "5": { "1": { "name": "splitter", "color": document.getElementById("splitter"), "price": 10, "updateCooldown": 20 } },
@@ -182,8 +182,8 @@ document.onkeyup = function KeyEventHandler(e) {
         case 69://e
             if (buildings[map[x][y].type][map[x][y].level + 1] == undefined) { return; }
             if (buildings[map[x][y].type][map[x][y].level + 1].price > materials["water"].amount) { return; }
-            map[x][y].upgrade();
             materials["water"].amount = materials["water"].amount - buildings[map[x][y].type][map[x][y].level + 1].price
+            map[x][y].upgrade();
             break;
     }
 }
