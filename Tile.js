@@ -4,7 +4,8 @@ class Tile {
         this.x = x;
         this.lastUpdate = 0;
         this.canUpdate;
-        this.updateCooldown = 0;
+        this.level = 1;
+        this.upgrade = undefined;
         this.space = [];
         this.y = y;
         this.isnew;
@@ -12,6 +13,7 @@ class Tile {
         this.hasSpace;
         this.update;
         this.facing = facing;
+        this.upgrade = () => { this.level++; }
         switch (type) {
             case 0:
                 this.canUpdate = false;
@@ -20,7 +22,6 @@ class Tile {
                 this.spaceType = [];
                 break;
             case 1:
-                this.updateCooldown = 40;
                 this.canUpdate = true;
                 this.hasInput = false;
                 this.maxSpace = 1;
@@ -36,15 +37,13 @@ class Tile {
                 };
                 break;
             case 2://mover
-                this.updateCooldown = 20;
                 this.spaceType = [];
                 this.hasInput = true;
                 this.maxSpace = 1;
                 this.canUpdate = true;
-                this.update = () => { moveToFacing(this.x, this.y); }
+                this.update = () => { moveToFacing(this.x, this.y); };
                 break;
             case 3:
-                this.updateCooldown = 20;
                 this.canUpdate = true;
                 this.maxSpace = 1;
                 this.hasInput = true;
@@ -57,7 +56,6 @@ class Tile {
                 }
                 break;
             case 4:
-                this.updateCooldown = 60;
                 this.maxSpace = 2;
                 this.spaceType = ["water"];
                 this.hasInput = true;
@@ -69,17 +67,13 @@ class Tile {
                 }
                 break;
             case 5:
-                this.updateCooldown = 20;
                 this.maxSpace = 1;
                 this.spaceType = [];
                 this.hasInput = true;
                 this.canUpdate = true;
                 this.update = () => {
-                    console.log(this.facing);
                     this.facing = reverseFacing(this.facing);
                     moveToFacing(this.x, this.y);
-                    console.log(this.facing);
-
                 }
                 break;
         }
@@ -105,6 +99,9 @@ function moveToFacing(x, y, itemIn, facingIn) {
     switch (facing) {
         case 0://up
             var otherTile = map[x][y - 1];
+            if (otherTile == undefined) {
+                return;
+            }
             if (tile.space.length != 0) {
                 if (tile.isnew) {
                     tile.isnew = false;
@@ -125,6 +122,9 @@ function moveToFacing(x, y, itemIn, facingIn) {
             break;
         case 3://left
             var otherTile = map[x - 1][y];
+            if (otherTile == undefined) {
+                return;
+            }
             if (tile.space.length != 0) {
                 if (tile.isnew) {
                     tile.isnew = false;
@@ -145,6 +145,9 @@ function moveToFacing(x, y, itemIn, facingIn) {
             break;
         case 1://right
             var otherTile = map[x + 1][y];
+            if (otherTile == undefined) {
+                return;
+            }
             if (tile.space.length != 0) {
                 if (tile.isnew) {
                     tile.isnew = false;
@@ -165,6 +168,9 @@ function moveToFacing(x, y, itemIn, facingIn) {
             break;
         case 2://down
             var otherTile = map[x][y + 1];
+            if (otherTile == undefined) {
+                return;
+            }
             if (tile.space.length != 0) {
                 if (tile.isnew) {
                     tile.isnew = false;
