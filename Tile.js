@@ -9,7 +9,7 @@ class Tile {
     this.y = y;
     this.isnew;
     this.type = type;
-    this.hasSpace;
+    this.hasSpace = false;
     this.update;
     this.facing = facing;
     this.upgrade = () => {
@@ -68,7 +68,7 @@ class Tile {
         this.canUpdate = true;
         this.update = () => {
           if (this.spaceType == this.space) {
-            moveToFacing(this.x, this.y, "energy");
+            return moveToFacing(this.x, this.y, "energy");
           }
         };
         break;
@@ -79,7 +79,7 @@ class Tile {
         this.canUpdate = true;
         this.update = () => {
           this.facing = reverseFacing(this.facing);
-          moveToFacing(this.x, this.y);
+          return moveToFacing(this.x, this.y);
         };
         break;
       case 7:
@@ -89,72 +89,10 @@ class Tile {
         this.canUpdate = true;
         this.update = () => {
           if (this.space[0] == "water" && this.space[1] == "water") {
-            moveToFacing(this.x, this.y, "energy");
+            return moveToFacing(this.x, this.y, "energy");
           }
         };
         break;
-    }
-  }
-}
-
-function moveToFacing(ix, iy, itemIn, facingIn) {
-  var tile = map[ix][iy];
-  var item;
-  var facing;
-  if (facingIn == undefined) {
-    facing = tile.facing;
-  } else {
-    facing = facingIn;
-  }
-  if (itemIn == undefined) {
-    item = tile.space[0];
-  } else {
-    item = itemIn;
-  }
-  switch (facing) {
-    case 0: //up
-      var otherTile = map[ix][iy - 1];
-      CheckTileToMove(otherTile, tile, item);
-      break;
-    case 3: //left
-      var otherTile = map[ix - 1][iy];
-      CheckTileToMove(otherTile, tile, item);
-      break;
-    case 1: //right
-      var otherTile = map[ix + 1][iy];
-      CheckTileToMove(otherTile, tile, item);
-      break;
-    case 2: //down
-      var otherTile = map[ix][iy + 1];
-      CheckTileToMove(otherTile, tile, item);
-      break;
-  }
-}
-
-function CheckTileToMove(otherTile, tile, item) {
-  if (otherTile == undefined) {
-    return;
-  }
-  if (tile.space.length != 0) {
-    if (tile.isnew) {
-      tile.isnew = false;
-      return;
-    } else {
-      if (otherTile.hasInput) {
-        if (
-          otherTile.spaceType.length == 0 ||
-          otherTile.spaceType.includes(item)
-        ) {
-          if (otherTile.space.length < otherTile.maxSpace) {
-            otherTile.space.push(item);
-            tile.space = [];
-            console.log(otherTile.x + "   " + otherTile.y);
-            console.log(tile.x + "   " + tile.y);
-            map[otherTile.x][otherTile.y] = otherTile;
-            map[tile.x][tile.y] = tile;
-          }
-        }
-      }
     }
   }
 }

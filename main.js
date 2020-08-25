@@ -1,4 +1,5 @@
 var canvas = document.getElementById("canvas");
+// @ts-ignore
 var ctx = canvas.getContext("2d");
 var selectetDisplay = document.getElementById("selectetDisplay");
 var baseDisplay = document.getElementById("baseDisplay");
@@ -24,6 +25,7 @@ var buildings = {
     "5": { "1": { "name": "splitter", "color": document.getElementById("splitter"), "price": 10, "updateCooldown": 20 }, "2": { "name": "splitter lv.2", "color": document.getElementById("splitter2"), "price": 20, "updateCooldown": 10 } },
     "6": { "1": { "name": "clear", "color": document.getElementById("empty"), "price": 0, "updateCooldown": 0 } },
     "7": { "1": { "name": "boiler", "color": document.getElementById("transformator"), "price": 50, "updateCooldown": 35 } },
+    "8": { "1": { "name": "upgrade", "color": document.getElementById("upgrade"), "price": 0, "updateCooldown": 0 } },
 }
 var facings = {
     "0": "Up",
@@ -59,10 +61,10 @@ map[10][11] = new Tile(10, 11, 1, 0);
 
 var interval = setInterval(gameloop, 50);
 
-
 var ticks = 0;
 
 function gameloop() {
+
     if (boost == 2) {
         ticks++;
         if (ticks > 150) {
@@ -106,8 +108,26 @@ function gameloop() {
             }
         }
     }
-    ctx.fillStyle = "#a32020";
-    ctx.strokeRect(x * 12, y * 12, 12, 12);
+    drawUI();
+}
+
+function drawUI() {
+    ctx.globalAlpha = 0.6;
+    ctx.translate(x * 12 + 6, y * 12 + 6);
+    if (selectet !== 8) {
+        ctx.rotate(facingToAngle(facing));
+    }
+    var selectetColor = buildings[selectet]["1"].color;
+    if (selectet == 0) {
+        selectetColor = document.getElementById("emptyUI")
+    }
+    ctx.drawImage(selectetColor, 0 - 6, 0 - 6, 12, 12);
+    if (selectet !== 8) {
+        ctx.rotate(- facingToAngle(facing));
+    }
+    ctx.translate(-(x * 12 + 6), -(y * 12 + 6));
+
+    ctx.globalAlpha = 1;
     ctx.font = '12px arial';
     ctx.fillStyle = "#FFFFFF"
     ctx.fillRect(0, 600, 600, 800);
@@ -127,15 +147,14 @@ function gameloop() {
     var idsbui = [];
     for (let k in buildings[selectet]) idsbui.push(k);
     for (let index = 1; index < idsbui.length + 1; index++) {
-      console.log(selectet)
-      ctx.drawImage(buildings[selectet][index].color, 300, 600 + index * 13, 12, 12);
+        ctx.drawImage(buildings[selectet][index].color, 300, 600 + index * 13, 12, 12);
         if (buildings[selectet][index].price > materials["water"].amount) {
             ctx.fillStyle = "#ff0000"
         }
         ctx.fillText(buildings[selectet][index].price, 300 + 15, 600 + index * 12 + 12);
     }
-
 }
+
 
 document.onkeyup = function KeyEventHandler(e) {
     var code = e.keyCode;
@@ -164,14 +183,21 @@ document.onkeyup = function KeyEventHandler(e) {
             if (buildings[selectet][1].price > materials["water"].amount) {
                 return;
             }
-            if (selectet == 0) {
-                materials["water"].amount = materials["water"].amount + buildings[map[x][y].type][1].price / 2
+            switch (selectet) {
+                case 0:
+                    materials["water"].amount = materials["water"].amount + buildings[map[x][y].type][1].price / 2
+                    return;
+                case 6:
+                    map[x][y].space = [];
+                    return;
+                case 8:
+                    if (buildings[map[x][y].type][map[x][y].level + 1] == undefined) { return; }
+                    if (buildings[map[x][y].type][map[x][y].level + 1].price > materials["water"].amount) { return; }
+                    materials["water"].amount = materials["water"].amount - buildings[map[x][y].type][map[x][y].level + 1].price
+                    map[x][y].upgrade();
+                    return;
             }
-            if (selectet == 6) {
-                map[x][y].space = [];
-            } else {
-                map[x][y] = new Tile(x, y, selectet, facing);
-            }
+            map[x][y] = new Tile(x, y, selectet, facing);
             break;
         case 81://q
             if (selectet == maxSelectet) {
@@ -190,10 +216,11 @@ document.onkeyup = function KeyEventHandler(e) {
             facingDisplay.textContent = " Facing: " + facings[facing];
             break;
         case 69://e
-            if (buildings[map[x][y].type][map[x][y].level + 1] == undefined) { return; }
-            if (buildings[map[x][y].type][map[x][y].level + 1].price > materials["water"].amount) { return; }
-            materials["water"].amount = materials["water"].amount - buildings[map[x][y].type][map[x][y].level + 1].price
-            map[x][y].upgrade();
+            if (selectet == 0) {
+                selectet = maxSelectet;
+            } else {
+                selectet--;
+            }
             break;
     }
 }
@@ -224,61 +251,61 @@ function reverseFacing(facing) {
     }
 }
 
-function test() {
-    map = 1;
+function moveToFacing(ix, iy, itemIn, facingIn) {
+    var tile = map[ix][iy];
+    var item;
+    var facing;
+    if (facingIn == undefined) {
+        facing = tile.facing;
+    } else {
+        facing = facingIn;
+    }
+    if (itemIn == undefined) {
+        item = tile.space[0];
+    } else {
+        item = itemIn;
+    }
+    switch (facing) {
+        case 0: //up
+            var otherTile = map[ix][iy - 1];
+            return CheckTileToMove(otherTile, tile, item);
+        case 3: //left
+            var otherTile = map[ix - 1][iy];
+            return CheckTileToMove(otherTile, tile, item);
+        case 1: //right
+            var otherTile = map[ix + 1][iy];
+            return CheckTileToMove(otherTile, tile, item);
+        case 2: //down
+            var otherTile = map[ix][iy + 1];
+            return CheckTileToMove(otherTile, tile, item);
+    }
 }
-//WIP
-document.getElementById("save").onclick = function save() {
-    var out = "";
-    var counter = 0;
-    var oldsave = map[0][0].type + "," + map[0][0].facing + "," + map[0][0].level;
-    for (let indexy = 0; indexy < map.length; indexy++) {
-        for (let index = 0; index < map[0].length; index++) {
-            var temp = map[index][indexy].type + "," + map[index][indexy].facing + "," + map[index][indexy].level;
-            if (temp == oldsave) {
-                counter++;
-            } else {
-                if (counter == 0) { counter == 1 };
-                out = out + counter + ":" + oldsave + "/";
-                counter = 1;
+
+function CheckTileToMove(otherTile, tile, item) {
+    if (otherTile == undefined) {
+        return;
+    }
+    if (otherTile.type == 0) {
+        console.log( otherTile)
+    }
+    if (tile.space.length != 0) {
+        if (tile.isnew) {
+            tile.isnew = false;
+            return;
+        } else {
+            if (otherTile.hasInput) {
+                if (
+                    otherTile.spaceType.length == 0 ||
+                    otherTile.spaceType.includes(item)
+                ) {
+                    if (otherTile.space.length < otherTile.maxSpace) {
+                        otherTile.space.push(item);
+                        tile.space.shift();
+                        map[otherTile.y][otherTile.x] = otherTile;
+                        map[tile.x][tile.y] = tile;
+                    }
+                }
             }
-            oldsave = temp;
         }
     }
-    out = out + counter + ":" + oldsave + "/";
-    out = out + materials["water"].amount + "," + materials["energy"].amount;
-    document.getElementById("saveout").textContent = out;
-}
-//WIP
-document.getElementById("load").onclick = function load() {
-  console.log("loaded")  
-  var input = document.getElementById('text').value;
-    var data = input.split("/");
-    var mate = data.pop();
-    var tempmap = [];
-    var mapdimssave = [];
-    var counter = 0;
-    for (let i = 0; i < data.length; i++) {
-        var element = data[i];
-        var datatemp = element.split(":");
-        var datetemp = datatemp[1].split(",");
-        counter = parseInt(datatemp[0]);
-        for (let indexc = mapdimssave.length - 1; 0 < counter; indexc++) {
-
-            console.log(datetemp[1]);
-
-            var tiletemp = new Tile(mapdimssave.length, tempmap.length, datetemp[0], datetemp[1]);
-            tiletemp.level = datetemp[2];
-            mapdimssave.push(tiletemp);
-            counter--;
-            if (mapdimssave.length == mapDimensions) {
-                tempmap.push(mapdimssave);
-                mapdimssave = [];
-                indexc = 0;
-            }
-        }
-    }
-    map = tempmap;
-
-
 }
