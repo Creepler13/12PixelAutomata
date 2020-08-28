@@ -1,5 +1,5 @@
 var T = require("../Tile.js");
-exports.class = class emptyTile extends T {
+exports.class = class empty extends T {
     constructor(x, y, type, facing) {
         super(x, y, type, facing);
         this.canUpdate = false;

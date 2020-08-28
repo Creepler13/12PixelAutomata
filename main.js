@@ -4,16 +4,21 @@ var ctx = canvas.getContext("2d");
 var selectetDisplay = document.getElementById("selectetDisplay");
 var baseDisplay = document.getElementById("baseDisplay");
 var facingDisplay = document.getElementById("facingDisplay");
-var TC = require("./TileCreator");
-var TileCreator = new TC.class();
-TileCreator.loadTiles("buildings").then(() => { startGame() });
-console.log(TileCreator)
+var mapClass = require("./map");
+var World = new mapClass.Map();
+World.TileCreator.loadTiles("buildings").then(() => { startGame() });
 var mapDimensions = 50;
 
 var frame = 0;
 var time = 0;
 var boost = 1;
-
+var ticks, x, y, selectet, maxSelectet
+var facings = {
+    "0": "Up",
+    "1": "Right",
+    "2": "Down",
+    "3": "Left"
+}
 
 var facing = 0;
 var facingsSize = [];
@@ -22,27 +27,26 @@ var maxSelectetFacing = facingsSize.length - 1;
 facingDisplay.textContent = " Facing: " + facings[facing];
 
 function startGame() {
-    var x = 0;
-    var y = 0;
-    var selectet = 0;
-    var buildingsSize = [];
-    for (let k in buildings) buildingsSize.push(k);
-    var maxSelectet = buildingsSize.length - 1;
+    x = 0;
+    y = 0;
+    selectet = 0;
+    maxSelectet = World.TileCreator.BuildingCount - 1;
+    // TODO
     selectetDisplay.textContent = "Selectet building: " + buildings[selectet][1].name
-    var map = [];
+    World.reset();
     for (let index = 0; index < mapDimensions; index++) {
         var temp = [];
         for (let indexy = 0; indexy < mapDimensions; indexy++) {
-            temp.push(TileCreator.createTile(indexy, index, "emptyTile", 0));
+            World.set(indexy, index, "empty", 0);
         }
         map.push(temp);
     }
-    map[10][10] = TileCreator.createTile(10, 10, 3, 0);
-    map[10][11] = TileCreator.createTile(10, 11, 1, 0);
+    World.set(10, 10, "empty", 0)
+    World.set(10, 11, "empty", 0)
 
     var interval = setInterval(gameloop, 50);
 
-    var ticks = 0;
+    ticks = 0;
 }
 
 function gameloop() {
