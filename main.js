@@ -4,7 +4,7 @@ var ctx = canvas.getContext("2d");
 var selectetDisplay = document.getElementById("selectetDisplay");
 var baseDisplay = document.getElementById("baseDisplay");
 var facingDisplay = document.getElementById("facingDisplay");
-var mapClass = require("./map");
+var mapClass = require("./World");
 var World = new mapClass.Map();
 World.TileCreator.loadTiles("buildings").then(() => { startGame() });
 var mapDimensions = 50;
@@ -27,19 +27,18 @@ var maxSelectetFacing = facingsSize.length - 1;
 facingDisplay.textContent = " Facing: " + facings[facing];
 
 function startGame() {
+    console.log("game Started")
     x = 0;
     y = 0;
     selectet = 0;
     maxSelectet = World.TileCreator.BuildingCount - 1;
     // TODO
-    selectetDisplay.textContent = "Selectet building: " + buildings[selectet][1].name
+    selectetDisplay.textContent = "Selectet building: " + World.TileCreator.getData(World.TileCreator.idToName(selectet), "name")
     World.reset();
     for (let index = 0; index < mapDimensions; index++) {
-        var temp = [];
         for (let indexy = 0; indexy < mapDimensions; indexy++) {
             World.set(indexy, index, "empty", 0);
         }
-        map.push(temp);
     }
     World.set(10, 10, "empty", 0)
     World.set(10, 11, "empty", 0)
@@ -63,9 +62,9 @@ function gameloop() {
         materials.energy.amount = materials.energy.amount - 50;
     }
 
-    for (let index = 0; index < map.length; index++) {
-        for (let indexy = 0; indexy < map[0].length; indexy++) {
-            var tile = map[index][indexy];
+    for (let index = 0; index < World.getXLength(); index++) {
+        for (let indexy = 0; indexy < World.getYLength(0); indexy++) {
+            var tile = World.get(index, indexy);
             if (tile.canUpdate) {
                 if (tile.lastUpdate >= buildings[tile.type][tile.level].updateCooldown / boost) {
                     tile.update();

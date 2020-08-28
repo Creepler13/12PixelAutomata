@@ -15,5 +15,11 @@ exports.Map = class Map {
         this.reset = () => {
             this.content = [];
         }
+        this.getXLength = () => {
+            return this.content.length
+        }
+        this.getYLength = (i) => {
+            return this.content[i] === undefined ? 0 : this.content[i].length
+        }
     }
 }

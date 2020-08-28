@@ -9,4 +9,5 @@ exports.class = class empty extends T {
     }
 }
 
-exports.texture = "";
+exports.texture = "test";
+exports.name = "empty";

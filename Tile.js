@@ -1,23 +1,16 @@
- class Tile {
+class Tile {
   constructor(x, y, type, facing) {
     this.x = x;
     this.y = y;
     this.lastUpdate = 0;
-    var b = buildings[type][1];
-    this.canUpdate = b.canUpdate;
     this.level = 1;
     this.space = [];
     this.isnew = false;
     this.type = type;
-    this.update = b.update;
     this.facing = facing;
     this.upgrade = () => {
       this.level++;
     };
-    this.canUpdate = (b.update !== undefined ? true : false);
-    this.maxSpace = b.maxSpace;
-    this.hasInput = b.hasInput;
-    this.spaceType = b.spaceType;
     /** 
       switch (type) {
         case 0:

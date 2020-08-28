@@ -1,5 +1,6 @@
 const fs = require("fs");
 const { TouchBarOtherItemsProxy } = require("electron/main");
+const Tile = require("./Tile");
 exports.class = class TileCreator {
     constructor() {
 
@@ -16,21 +17,39 @@ exports.class = class TileCreator {
                         return;
                     }
                     this.BuildingCount = jsfiles.length;
+                    var index = 0;
                     jsfiles.forEach((f, i) => {
                         console.log("loading " + `./${link}/${f}`)
                         let t = require(`./${link}/${f}`);
-                        temp[f.replace(".js", "")] = { "texture": t.texture, "class": t.class};
+                        console.log(t.class.maxSpace)
+                        temp[f.replace(".js", "")] = { "tile": t, "id": index };
+                        index++;
                     });
+                    this.TileTypes = temp;
+                    resolve();
                 });
-                this.TileTypes = temp;
-
-                resolve();
             });
         }
 
         this.createTile = (x, y, type, facing) => {
-            console.log(type + "  " + this.TileTypes[type])
-            return new this.TileTypes[type].class(x, y, type, facing);
+            console.log(type + "  " + this.TileTypes[type]);
+            return new this.TileTypes[type].tile.class(x, y, type, facing)
+        }
+
+        this.getData = (type, a) => {
+            return this.TileTypes[type].tile[a]
+        }
+
+        this.idToName = (id) => {
+            for (let e in this.TileTypes) {
+                if (this.TileTypes[e].id === id) {
+                    return e
+                }
+            }
+        }
+
+        this.nameToId = (name) => {
+            return this.TileTypes[name].id
         }
 
     }
