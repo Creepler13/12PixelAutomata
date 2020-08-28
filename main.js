@@ -4,35 +4,16 @@ var ctx = canvas.getContext("2d");
 var selectetDisplay = document.getElementById("selectetDisplay");
 var baseDisplay = document.getElementById("baseDisplay");
 var facingDisplay = document.getElementById("facingDisplay");
-
+var TC = require("./TileCreator");
+var TileCreator = new TC.class();
+TileCreator.loadTiles("buildings").then(() => { startGame() });
+console.log(TileCreator)
 var mapDimensions = 50;
 
 var frame = 0;
 var time = 0;
 var boost = 1;
 
-var materials = {
-    "water": { "color": document.getElementById("water"), "amount": 100 },
-    "energy": { "color": document.getElementById("energy"), "amount": 0 },
-    "steam": { "color": document.getElementById("water"), "amount": 0 }
-}
-var buildings = {
-    "0": { "1": { "name": "empty", "color": document.getElementById("empty"), "price": 0, "updateCooldown": 0 } },
-    "1": { "1": { "name": "water-collector", "color": document.getElementById("water-collector"), "price": 20, "updateCooldown": 40 } },
-    "2": { "1": { "name": "mover", "color": document.getElementById("mover"), "price": 2, "updateCooldown": 20 }, "2": { "name": "mover lv.2", "color": document.getElementById("mover2"), "price": 7, "updateCooldown": 10 } },
-    "3": { "1": { "name": "base", "color": document.getElementById("base"), "price": 100, "updateCooldown": 5 } },
-    "4": { "1": { "name": "factory", "color": document.getElementById("transformator"), "price": 50, "updateCooldown": 60 } },
-    "5": { "1": { "name": "splitter", "color": document.getElementById("splitter"), "price": 10, "updateCooldown": 20 }, "2": { "name": "splitter lv.2", "color": document.getElementById("splitter2"), "price": 20, "updateCooldown": 10 } },
-    "6": { "1": { "name": "clear", "color": document.getElementById("empty"), "price": 0, "updateCooldown": 0 } },
-    "7": { "1": { "name": "boiler", "color": document.getElementById("transformator"), "price": 50, "updateCooldown": 35 } },
-    "8": { "1": { "name": "upgrade", "color": document.getElementById("upgrade"), "price": 0, "updateCooldown": 0 } },
-}
-var facings = {
-    "0": "Up",
-    "1": "Right",
-    "2": "Down",
-    "3": "Left"
-}
 
 var facing = 0;
 var facingsSize = [];
@@ -40,28 +21,29 @@ for (let k in facings) facingsSize.push(k);
 var maxSelectetFacing = facingsSize.length - 1;
 facingDisplay.textContent = " Facing: " + facings[facing];
 
-
-var x = 0;
-var y = 0;
-var selectet = 0;
-var buildingsSize = [];
-for (let k in buildings) buildingsSize.push(k);
-var maxSelectet = buildingsSize.length - 1;
-selectetDisplay.textContent = "Selectet building: " + buildings[selectet][1].name
-var map = [];
-for (let index = 0; index < mapDimensions; index++) {
-    var temp = [];
-    for (let indexy = 0; indexy < mapDimensions; indexy++) {
-        temp.push(new Tile(indexy, index, 0, 0));
+function startGame() {
+    var x = 0;
+    var y = 0;
+    var selectet = 0;
+    var buildingsSize = [];
+    for (let k in buildings) buildingsSize.push(k);
+    var maxSelectet = buildingsSize.length - 1;
+    selectetDisplay.textContent = "Selectet building: " + buildings[selectet][1].name
+    var map = [];
+    for (let index = 0; index < mapDimensions; index++) {
+        var temp = [];
+        for (let indexy = 0; indexy < mapDimensions; indexy++) {
+            temp.push(TileCreator.createTile(indexy, index, "emptyTile", 0));
+        }
+        map.push(temp);
     }
-    map.push(temp);
+    map[10][10] = TileCreator.createTile(10, 10, 3, 0);
+    map[10][11] = TileCreator.createTile(10, 11, 1, 0);
+
+    var interval = setInterval(gameloop, 50);
+
+    var ticks = 0;
 }
-map[10][10] = new Tile(10, 10, 3, 0);
-map[10][11] = new Tile(10, 11, 1, 0);
-
-var interval = setInterval(gameloop, 50);
-
-var ticks = 0;
 
 function gameloop() {
 
@@ -197,7 +179,7 @@ document.onkeyup = function KeyEventHandler(e) {
                     map[x][y].upgrade();
                     return;
             }
-            map[x][y] = new Tile(x, y, selectet, facing);
+            map[x][y] = TileCreator.createTile(x, y, selectet, facing);
             break;
         case 81://q
             if (selectet == maxSelectet) {
@@ -286,7 +268,7 @@ function CheckTileToMove(otherTile, tile, item) {
         return;
     }
     if (otherTile.type == 0) {
-        console.log( otherTile)
+        console.log(otherTile)
     }
     if (tile.space.length != 0) {
         if (tile.isnew) {

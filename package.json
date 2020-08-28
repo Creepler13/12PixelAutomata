@@ -1,0 +1,23 @@
+{
+  "name": "pixel-automata",
+  "version": "1.0.0",
+  "description": "litte Cellular Automata(not really obeying the law of Cellular Automata) Test",
+  "main": "app.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Creepler13/12PixelAutomata.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Creepler13/12PixelAutomata/issues"
+  },
+  "homepage": "https://github.com/Creepler13/12PixelAutomata#readme",
+  "dependencies": {
+    "electron": "^10.0.0",
+    "fs": "0.0.1-security"
+  }
+}
