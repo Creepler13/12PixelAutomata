@@ -6,9 +6,8 @@ var baseDisplay = document.getElementById("baseDisplay");
 var facingDisplay = document.getElementById("facingDisplay");
 var mapClass = require("./World");
 var World = new mapClass.Map();
-World.TileCreator.loadTiles("buildings").then(() => { startGame() });
+World.init().then(() => { startGame(); console.log(World.TileCreator.getData("buildings", "mover", "t")) });
 var mapDimensions = 50;
-
 var frame = 0;
 var time = 0;
 var boost = 1;
@@ -26,14 +25,16 @@ for (let k in facings) facingsSize.push(k);
 var maxSelectetFacing = facingsSize.length - 1;
 facingDisplay.textContent = " Facing: " + facings[facing];
 
+
+
 function startGame() {
     console.log("game Started")
     x = 0;
     y = 0;
     selectet = 0;
-    maxSelectet = World.TileCreator.BuildingCount - 1;
+    maxSelectet = World.TileCreator.getSize("buildings") - 1;
     // TODO
-    selectetDisplay.textContent = "Selectet building: " + World.TileCreator.getData(World.TileCreator.idToName(selectet), "name")
+    selectetDisplay.textContent = "Selectet building: " + World.TileCreator.getData("buildings", getSelectet(), "name")
     World.reset();
     for (let index = 0; index < mapDimensions; index++) {
         for (let indexy = 0; indexy < mapDimensions; indexy++) {
@@ -57,22 +58,17 @@ function gameloop() {
             ticks = 0;
         }
     }
-    if (materials.energy.amount > 50) {
+    if (World.Materials.get("energy") > 50) {
         boost = 2;
-        materials.energy.amount = materials.energy.amount - 50;
+        World.Materials.set("energy", World.Materials.get("energy") - 50)
     }
 
     for (let index = 0; index < World.getXLength(); index++) {
         for (let indexy = 0; indexy < World.getYLength(0); indexy++) {
             var tile = World.get(index, indexy);
-            if (tile.canUpdate) {
-                if (tile.lastUpdate >= buildings[tile.type][tile.level].updateCooldown / boost) {
-                    tile.update();
-                    tile.lastUpdate = 0;
-                } else {
-                    tile.lastUpdate++;
-                }
-            }
+
+            tile.doUpdate();
+
             ctx.translate(index * 12 + 6, indexy * 12 + 6);
             ctx.rotate(facingToAngle(tile.facing));
             ctx.drawImage(buildings[tile.type][tile.level].color, 0 - 6, 0 - 6, 12, 12);
@@ -293,4 +289,8 @@ function CheckTileToMove(otherTile, tile, item) {
             }
         }
     }
+}
+
+function getSelectet() {
+    return World.TileCreator.idToName(selectet);
 }

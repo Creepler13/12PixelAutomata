@@ -1,25 +1,46 @@
 var TC = require("./TileCreator");
+var DataStorage = require("./Modules/DataStorage");
 exports.Map = class Map {
     constructor() {
-        this.TileCreator = new TC.class();
-        this.content = [];
+
+        this.TileCreator = new TC.TileCreator();
+        this.Materials = new DataStorage.DataStorage();
+
+        this.map = [];
+
         this.get = (x, y) => {
-            return this.content[x][y];
+            return this.map[x][y];
         }
+
+        this.init = () => {
+            return new Promise((res) => {
+                this.TileCreator.load("data").then(() => {
+                    var keys = this.TileCreator.getKeys("materials");
+                    keys.forEach((e) => {
+                        this.Materials.set(e, 0);
+                    })
+                    res();
+                })
+            })
+        }
+
         this.set = (x, y, t, f) => {
-            if (this.content[x] === undefined) {
-                this.content[x] = [];
+            if (this.map[x] === undefined) {
+                this.map[x] = [];
             }
-            this.content[x][y] = this.TileCreator.createTile(x, y, t, f);
+            this.map[x][y] = this.TileCreator.createTile(x, y, t, f);
         }
+
         this.reset = () => {
-            this.content = [];
+            this.map = [];
         }
+
         this.getXLength = () => {
-            return this.content.length
+            return this.map.length
         }
+
         this.getYLength = (i) => {
-            return this.content[i] === undefined ? 0 : this.content[i].length
+            return this.map[i] === undefined ? 0 : this.map[i].length
         }
     }
 }
