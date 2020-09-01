@@ -9,5 +9,5 @@ exports.class = class empty extends T {
     }
 }
 
-exports.texture = "test";
+exports.texture = "textures/empty.png";
 exports.name = "empty";

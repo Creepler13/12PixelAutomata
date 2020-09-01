@@ -9,7 +9,7 @@ class Tile {
     this.type = type;
     this.canUpdate = false;
     this.updateCooldown = 0;
-    this.update = () => { }
+    this.update = () => { };
     this.facing = facing;
     this.upgrade = () => {
       this.level++;

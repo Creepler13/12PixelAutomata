@@ -6,7 +6,7 @@ var baseDisplay = document.getElementById("baseDisplay");
 var facingDisplay = document.getElementById("facingDisplay");
 var mapClass = require("./World");
 var World = new mapClass.Map();
-World.init().then(() => { startGame(); console.log(World.TileCreator.getData("buildings", "mover", "t")) });
+World.init().then(() => { startGame(); console.log(World.TileCreator.getData("buildings", "mover", 1, "name")) });
 var mapDimensions = 50;
 var frame = 0;
 var time = 0;
@@ -28,25 +28,26 @@ facingDisplay.textContent = " Facing: " + facings[facing];
 
 
 function startGame() {
-    console.log("game Started")
+    console.log("game Started");
     x = 0;
     y = 0;
     selectet = 0;
     maxSelectet = World.TileCreator.getSize("buildings") - 1;
     // TODO
-    selectetDisplay.textContent = "Selectet building: " + World.TileCreator.getData("buildings", getSelectet(), "name")
+    selectetDisplay.textContent = "Selectet building: " + World.TileCreator.getData("buildings", getSelectet(), 1, "name");
     World.reset();
     for (let index = 0; index < mapDimensions; index++) {
         for (let indexy = 0; indexy < mapDimensions; indexy++) {
-            World.set(indexy, index, "empty", 0);
+            World.set(indexy, index, "buildings", "empty", 0);
         }
     }
-    World.set(10, 10, "empty", 0)
-    World.set(10, 11, "empty", 0)
+    World.set(10, 10, "buildings", "empty", 0)
+    World.set(10, 11, "buildings", "empty", 0)
 
     var interval = setInterval(gameloop, 50);
 
     ticks = 0;
+
 }
 
 function gameloop() {
@@ -71,7 +72,7 @@ function gameloop() {
 
             ctx.translate(index * 12 + 6, indexy * 12 + 6);
             ctx.rotate(facingToAngle(tile.facing));
-            ctx.drawImage(buildings[tile.type][tile.level].color, 0 - 6, 0 - 6, 12, 12);
+            ctx.drawImage(World.TileCreator.getTexture("buildings", tile.type, tile.level), 0 - 6, 0 - 6, 12, 12);
             ctx.rotate(- facingToAngle(tile.facing));
             ctx.translate(-(index * 12 + 6), -(indexy * 12 + 6));
 
@@ -79,7 +80,7 @@ function gameloop() {
 
                 switch (tile.space.length) {
                     case 1:
-                        ctx.drawImage(materials[tile.space[0]].color, index * 12 + 2, indexy * 12 + 2, 8, 8);
+                        ctx.drawImage(World.TileCreator.getTexture("materials", tile.space[0], 1), index * 12 + 2, indexy * 12 + 2, 8, 8);
                         break;
                     case 2:
                         ctx.drawImage(materials[tile.space[0]].color, index * 12 + 2, indexy * 12 + 6, 8, 4);
@@ -292,5 +293,5 @@ function CheckTileToMove(otherTile, tile, item) {
 }
 
 function getSelectet() {
-    return World.TileCreator.idToName(selectet);
+    return World.TileCreator.idToName("buildings", selectet);
 }

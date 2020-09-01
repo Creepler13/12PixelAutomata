@@ -17,15 +17,20 @@ exports.DataManager = class DataManager {
                         if (f.endsWith(".js")) {
                             console.log("loading file " + `../${link}/${dir}/${f}`)
                             let t = require(`../${link}/${dir}/${f}`);
-                            temp[f.replace(".js", "")] = { "tile": t, "id": index };
+                            // this.textures.push(require(t.texture));
+                            temp[f.replace(".js", "")] = {};
+                            temp[f.replace(".js", "")][1] = { "tile": t, "id": index, "texture": fs.readFileSync(t.texture) };
                             index++;
                         } else {
                             var dir2 = fs.readdirSync(`./${link}/${dir}/${f}`)
                             temp[f] = {};
+                            var counter = 0;
                             dir2.forEach((t, e) => {
+                                counter++;
                                 console.log("loading file " + `../${link}/${dir}/${f}`)
                                 let te = require(`../${link}/${dir}/${f}/${t}`);
-                                temp[f][t.replace(".js", "")] = { "tile": te, "id": index };
+                                // this.textures.push(require(te.texture));
+                                temp[f][counter] = { "tile": te, "id": index, "texture": fs.readFileSync(te.texture) };
                                 index++;
                             })
                             temp[f].size = dir2.length;
@@ -34,9 +39,15 @@ exports.DataManager = class DataManager {
                     if (this.Data[dir] === undefined) this.Data[dir] = {};
                     this.Data[dir].data = temp;
                     this.Data[dir].size = files2.length;
+
                 });
+                console.log(this.Data)
                 resolve();
             });
+        }
+
+        this.getTexture = (dir, id, level) => {
+            return this.Data[dir].data[id][level].texture
         }
 
         this.getSize = (dir) => {
@@ -55,9 +66,8 @@ exports.DataManager = class DataManager {
             return temp;
         }
 
-        this.getData = (dir, type, a) => {
-            console.log(this.Data[dir])
-            return this.Data[dir].data[type].tile[a]
+        this.getData = (dir, id, level, a) => {
+            return this.Data[dir].data[id][level].tile[a]
         }
     }
 }

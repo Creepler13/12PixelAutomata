@@ -1,5 +1,5 @@
 var T = require("../../../Tile.js");
-exports.class = class mover1 extends T {
+exports.class = class mover extends T {
     constructor(x, y, type, facing) {
         super(x, y, type, facing);
         this.canUpdate = true;
@@ -9,5 +9,5 @@ exports.class = class mover1 extends T {
     }
 }
 
-exports.texture = "test";
-exports.name = "mover1";
+exports.texture = "textures/mover.png";
+exports.name = "mover";

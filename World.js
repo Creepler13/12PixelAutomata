@@ -24,11 +24,11 @@ exports.Map = class Map {
             })
         }
 
-        this.set = (x, y, t, f) => {
+        this.set = (x, y, d, t, f) => {
             if (this.map[x] === undefined) {
                 this.map[x] = [];
             }
-            this.map[x][y] = this.TileCreator.createTile(x, y, t, f);
+            this.map[x][y] = this.TileCreator.createTile(x, y, d, t, f);
         }
 
         this.reset = () => {
