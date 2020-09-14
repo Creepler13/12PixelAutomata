@@ -39,7 +39,7 @@ function startGame() {
         }
     }
     World.set(10, 10, "buildings", "base", 0, 1);
-
+    World.Materials.set("water", 20);
     var interval = setInterval(gameloop, 50);
 
 }

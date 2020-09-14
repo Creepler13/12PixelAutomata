@@ -39,7 +39,7 @@ exports.Map = class Map {
         }
 
         this.update = (x, y) => {
-            this.get(x, y).update(this);
+            this.get(x, y).doUpdate(this);
         }
 
         this.createNewMaterial = (x2, y2, material) => {

@@ -18,6 +18,6 @@ exports.class = class empty extends T {
     }
 }
 
-exports.texture = "textures/boiler.png";
+exports.texture = "textures/factory.png";
 exports.name = "Boiler";
 exports.price = "50";

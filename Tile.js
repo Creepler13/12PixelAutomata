@@ -15,7 +15,7 @@ class Tile {
             this.level++;
         };
         this.doUpdate = (World) => {
-            if (this.lastUpdate >= this.updateCooldown && this.canUpdate) {
+            if (this.lastUpdate >= this.updateCooldown  && this.canUpdate) {
                 this.update(World);
                 this.lastUpdate = 0;
             } else {
@@ -24,6 +24,5 @@ class Tile {
         }
     }
 }
-
 
 module.exports = Tile;
