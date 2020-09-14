@@ -4,6 +4,7 @@ exports.class = class empty extends T {
         super(x, y, type, facing);
         this.canUpdate = true;
         this.maxSpace = 1;
+        this.hasSpace = true;
         this.hasInput = true;
         this.updateCooldown = 10;
         this.update = (World) => {

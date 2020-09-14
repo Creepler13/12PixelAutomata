@@ -5,6 +5,7 @@ exports.class = class empty extends T {
         this.canUpdate = true;
         this.maxSpace = 2;
         this.hasInput = true;
+        this.hasSpace = true;
         this.updateCooldown = 35
         this.spaceType = ["water", "energy"];
         this.update = (world) => {

@@ -18,6 +18,7 @@ exports.DataManager = class DataManager {
                             console.log("loading file " + `../${link}/${dir}/${f}`)
                             let t = require(`../${link}/${dir}/${f}`);
                             temp[f.replace(".js", "")] = {};
+                            temp[f.replace(".js", "")].size = 1;
                             var imtTemp = document.createElement("img");
                             imtTemp.src = t.texture;
                             temp[f.replace(".js", "")][1] = { "tile": t, "id": index, "texture": imtTemp };
@@ -52,12 +53,19 @@ exports.DataManager = class DataManager {
             return this.Data[dir].data[id][level].texture
         }
 
+
+
         this.getSize = (dir) => {
             return this.Data[dir].size
         }
 
         this.getDir = (dir) => {
             return this.Data[dir].data
+        }
+
+
+        this.getEntrySize = (dir, id) => {
+            return this.Data[dir].data[id].size;
         }
 
         this.getKeys = (dir) => {

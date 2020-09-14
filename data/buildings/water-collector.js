@@ -5,6 +5,7 @@ exports.class = class empty extends T {
         this.canUpdate = true;
         this.maxSpace = 1;
         this.hasInput = false;
+        this.hasSpace = true;
         this.updateCooldown = 40
         this.update = (world) => {
             if (this.space.length == 0) {

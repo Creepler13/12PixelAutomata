@@ -31,11 +31,11 @@ exports.Map = class Map {
             })
         }
 
-        this.set = (x, y, d, t, f) => {
+        this.set = (x, y, dir, type, facing, level) => {
             if (this.map[x] === undefined) {
                 this.map[x] = [];
             }
-            this.map[x][y] = this.TileCreator.createTile(x, y, d, t, f);
+            this.map[x][y] = this.TileCreator.createTile(x, y, dir, type, facing, level);
         }
 
         this.update = (x, y) => {
@@ -63,7 +63,7 @@ exports.Map = class Map {
                 if (element === material) temp++;
             });
 
-            if (!from.hasSpace || !to.hasSpace || !to.hasInput || to.space.length + 1 > to.maxSpace || from.space.length === 0 || index >= from.space.length || (this.materialCountInTile(x2, y2, material) >= temp && to.spaceType.length !== 0)) { console.error("space Error"); return; };
+            if (!from.hasSpace || !to.hasSpace || !to.hasInput || to.space.length + 1 > to.maxSpace || from.space.length === 0 || index >= from.space.length || (this.materialCountInTile(x2, y2, material) >= temp && to.spaceType.length !== 0)) { return; };
 
             this.map[x2][y2].space.push(material);
             this.map[x][y].space.splice(index, 1);
@@ -77,7 +77,6 @@ exports.Map = class Map {
             });
             return count;
         }
-
 
         this.facingTo = (x, y, facing) => {
             switch (facing) {
@@ -117,6 +116,11 @@ exports.Map = class Map {
                 case this.facings.RIGHT:
                     return this.facings.LEFT;
             }
+        }
+
+        this.levelUp = (x, y) => {
+            var tile = this.get(x, y)
+            this.set(x, y, "buildings", tile.type, tile.facing, tile.level + 1);
         }
 
         this.reset = () => {

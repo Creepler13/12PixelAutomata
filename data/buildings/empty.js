@@ -5,6 +5,7 @@ exports.class = class empty extends T {
         this.canUpdate = false;
         this.maxSpace = 1;
         this.hasInput = true;
+        this.hasSpace = true;
         this.spaceType = [];
     }
 }
@@ -12,3 +13,4 @@ exports.class = class empty extends T {
 exports.texture = "textures/empty.png";
 exports.name = "empty";
 exports.price = "0";
+exports.canBuild = false;

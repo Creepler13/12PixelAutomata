@@ -5,6 +5,7 @@ exports.class = class mover extends T {
         this.canUpdate = true;
         this.maxSpace = 1;
         this.hasInput = true;
+        this.hasSpace = true;
         this.updateCooldown = 10;
         this.spaceType = [];
         this.update = (world) => {

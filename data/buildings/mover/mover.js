@@ -4,6 +4,7 @@ exports.class = class mover extends T {
         super(x, y, type, facing);
         this.canUpdate = true;
         this.maxSpace = 1;
+        this.hasSpace = true;
         this.hasInput = true;
         this.updateCooldown = 20;
         this.spaceType = [];

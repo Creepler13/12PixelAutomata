@@ -10,7 +10,13 @@ exports.DataStorage = class DataStorage {
         this.get = (key) => {
             return this.data[key]
         }
-        
+
+        this.getKeys = () => {
+            var temp = [];
+            for (const e in this.data) temp.push(e);
+            return temp;
+        }
+
 
     }
 
