@@ -17,9 +17,10 @@ exports.DataManager = class DataManager {
                         if (f.endsWith(".js")) {
                             console.log("loading file " + `../${link}/${dir}/${f}`)
                             let t = require(`../${link}/${dir}/${f}`);
-                            // this.textures.push(require(t.texture));
                             temp[f.replace(".js", "")] = {};
-                            temp[f.replace(".js", "")][1] = { "tile": t, "id": index, "texture": fs.readFileSync(t.texture) };
+                            var imtTemp = document.createElement("img");
+                            imtTemp.src = t.texture;
+                            temp[f.replace(".js", "")][1] = { "tile": t, "id": index, "texture": imtTemp };
                             index++;
                         } else {
                             var dir2 = fs.readdirSync(`./${link}/${dir}/${f}`)
@@ -29,8 +30,9 @@ exports.DataManager = class DataManager {
                                 counter++;
                                 console.log("loading file " + `../${link}/${dir}/${f}`)
                                 let te = require(`../${link}/${dir}/${f}/${t}`);
-                                // this.textures.push(require(te.texture));
-                                temp[f][counter] = { "tile": te, "id": index, "texture": fs.readFileSync(te.texture) };
+                                var imtTemp = document.createElement("img");
+                                imtTemp.src = te.texture;
+                                temp[f][counter] = { "tile": te, "id": index, "texture": imtTemp };
                                 index++;
                             })
                             temp[f].size = dir2.length;

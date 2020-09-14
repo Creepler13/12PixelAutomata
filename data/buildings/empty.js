@@ -11,3 +11,4 @@ exports.class = class empty extends T {
 
 exports.texture = "textures/empty.png";
 exports.name = "empty";
+exports.price = "0";

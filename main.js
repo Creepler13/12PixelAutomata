@@ -6,25 +6,19 @@ var baseDisplay = document.getElementById("baseDisplay");
 var facingDisplay = document.getElementById("facingDisplay");
 var mapClass = require("./World");
 var World = new mapClass.Map();
-World.init().then(() => { startGame(); console.log(World.TileCreator.getData("buildings", "mover", 1, "name")) });
+World.init().then(() => {
+    startGame();
+});
 var mapDimensions = 50;
 var frame = 0;
 var time = 0;
 var boost = 1;
-var ticks, x, y, selectet, maxSelectet
-var facings = {
-    "0": "Up",
-    "1": "Right",
-    "2": "Down",
-    "3": "Left"
-}
+var ticks, x, y, selectet, maxSelectet, tool
+var toolMax = 2;
 
 var facing = 0;
-var facingsSize = [];
-for (let k in facings) facingsSize.push(k);
-var maxSelectetFacing = facingsSize.length - 1;
-facingDisplay.textContent = " Facing: " + facings[facing];
-
+var maxSelectetFacing = 3;
+facingDisplay.textContent = " Facing: " + World.facings[facing];
 
 
 function startGame() {
@@ -32,8 +26,8 @@ function startGame() {
     x = 0;
     y = 0;
     selectet = 0;
+    tool = 0;
     maxSelectet = World.TileCreator.getSize("buildings") - 1;
-    // TODO
     selectetDisplay.textContent = "Selectet building: " + World.TileCreator.getData("buildings", getSelectet(), 1, "name");
     World.reset();
     for (let index = 0; index < mapDimensions; index++) {
@@ -41,8 +35,7 @@ function startGame() {
             World.set(indexy, index, "buildings", "empty", 0);
         }
     }
-    World.set(10, 10, "buildings", "empty", 0)
-    World.set(10, 11, "buildings", "empty", 0)
+    World.set(10, 10, "buildings", "base", 0);
 
     var interval = setInterval(gameloop, 50);
 
@@ -52,18 +45,6 @@ function startGame() {
 
 function gameloop() {
 
-    if (boost == 2) {
-        ticks++;
-        if (ticks > 150) {
-            boost = 1;
-            ticks = 0;
-        }
-    }
-    if (World.Materials.get("energy") > 50) {
-        boost = 2;
-        World.Materials.set("energy", World.Materials.get("energy") - 50)
-    }
-
     for (let index = 0; index < World.getXLength(); index++) {
         for (let indexy = 0; indexy < World.getYLength(0); indexy++) {
             var tile = World.get(index, indexy);
@@ -71,9 +52,9 @@ function gameloop() {
             tile.doUpdate();
 
             ctx.translate(index * 12 + 6, indexy * 12 + 6);
-            ctx.rotate(facingToAngle(tile.facing));
+            ctx.rotate(World.facingToAngle(tile.facing));
             ctx.drawImage(World.TileCreator.getTexture("buildings", tile.type, tile.level), 0 - 6, 0 - 6, 12, 12);
-            ctx.rotate(- facingToAngle(tile.facing));
+            ctx.rotate(-World.facingToAngle(tile.facing));
             ctx.translate(-(index * 12 + 6), -(indexy * 12 + 6));
 
             if (tile.space.length != 0) {
@@ -83,8 +64,8 @@ function gameloop() {
                         ctx.drawImage(World.TileCreator.getTexture("materials", tile.space[0], 1), index * 12 + 2, indexy * 12 + 2, 8, 8);
                         break;
                     case 2:
-                        ctx.drawImage(materials[tile.space[0]].color, index * 12 + 2, indexy * 12 + 6, 8, 4);
-                        ctx.drawImage(materials[tile.space[1]].color, index * 12 + 2, indexy * 12 + 6, 8, 4);
+                        ctx.drawImage(World.TileCreator.getTexture("materials", tile.space[0], 1), index * 12 + 2, indexy * 12 + 6, 8, 4);
+                        ctx.drawImage(World.TileCreator.getTexture("materials", tile.space[1], 1), index * 12 + 2, indexy * 12 + 6, 8, 4);
                         break;
                 }
             }
@@ -97,7 +78,7 @@ function drawUI() {
     ctx.globalAlpha = 0.6;
     ctx.translate(x * 12 + 6, y * 12 + 6);
     if (selectet !== 8) {
-        ctx.rotate(facingToAngle(facing));
+        ctx.rotate(World.facingToAngle(facing));
     }
     var selectetColor = buildings[selectet]["1"].color;
     if (selectet == 0) {
@@ -105,7 +86,7 @@ function drawUI() {
     }
     ctx.drawImage(selectetColor, 0 - 6, 0 - 6, 12, 12);
     if (selectet !== 8) {
-        ctx.rotate(- facingToAngle(facing));
+        ctx.rotate(-facingToAngle(facing));
     }
     ctx.translate(-(x * 12 + 6), -(y * 12 + 6));
 
@@ -141,27 +122,27 @@ function drawUI() {
 document.onkeyup = function KeyEventHandler(e) {
     var code = e.keyCode;
     switch (code) {
-        case 87://w
+        case 87: //w
             if (y > 0) {
                 y--;
             }
             break;
-        case 65://a
+        case 65: //a
             if (x > 0) {
                 x--;
             }
             break;
-        case 83://s
+        case 83: //s
             if (y < 49) {
                 y++;
             }
             break;
-        case 68://d
+        case 68: //d
             if (x < 49) {
                 x++;
             }
             break;
-        case 32://space
+        case 32: //space
             if (buildings[selectet][1].price > materials["water"].amount) {
                 return;
             }
@@ -179,17 +160,17 @@ document.onkeyup = function KeyEventHandler(e) {
                     map[x][y].upgrade();
                     return;
             }
-            map[x][y] = TileCreator.createTile(x, y, selectet, facing);
+            World.set(x, y, "buildings", getSelectet(), facing);
             break;
-        case 81://q
+        case 81: //q
             if (selectet == maxSelectet) {
                 selectet = 0;
             } else {
                 selectet++;
             }
-            selectetDisplay.textContent = "Selectet building: " + buildings[selectet][1].name;
+            selectetDisplay.textContent = "Selectet building: " + World.TileCreator.getData("buildings", getSelectet(), 1, "name");
             break;
-        case 82://r
+        case 82: //r
             if (facing == maxSelectetFacing) {
                 facing = 0;
             } else {
@@ -197,98 +178,20 @@ document.onkeyup = function KeyEventHandler(e) {
             }
             facingDisplay.textContent = " Facing: " + facings[facing];
             break;
-        case 69://e
+        case 69: //e
             if (selectet == 0) {
                 selectet = maxSelectet;
             } else {
                 selectet--;
             }
             break;
-    }
-}
-
-function facingToAngle(facing) {
-    switch (facing) {
-        case 0:
-            return 90 * Math.PI / 180;
-        case 2:
-            return -90 * Math.PI / 180;
-        case 3:
-            return 0;
-        case 1:
-            return -180 * Math.PI / 180;
-    }
-}
-
-function reverseFacing(facing) {
-    switch (facing) {
-        case 0:
-            return 2;
-        case 2:
-            return 0;
-        case 3:
-            return 1;
-        case 1:
-            return 3;
-    }
-}
-
-function moveToFacing(ix, iy, itemIn, facingIn) {
-    var tile = map[ix][iy];
-    var item;
-    var facing;
-    if (facingIn == undefined) {
-        facing = tile.facing;
-    } else {
-        facing = facingIn;
-    }
-    if (itemIn == undefined) {
-        item = tile.space[0];
-    } else {
-        item = itemIn;
-    }
-    switch (facing) {
-        case 0: //up
-            var otherTile = map[ix][iy - 1];
-            return CheckTileToMove(otherTile, tile, item);
-        case 3: //left
-            var otherTile = map[ix - 1][iy];
-            return CheckTileToMove(otherTile, tile, item);
-        case 1: //right
-            var otherTile = map[ix + 1][iy];
-            return CheckTileToMove(otherTile, tile, item);
-        case 2: //down
-            var otherTile = map[ix][iy + 1];
-            return CheckTileToMove(otherTile, tile, item);
-    }
-}
-
-function CheckTileToMove(otherTile, tile, item) {
-    if (otherTile == undefined) {
-        return;
-    }
-    if (otherTile.type == 0) {
-        console.log(otherTile)
-    }
-    if (tile.space.length != 0) {
-        if (tile.isnew) {
-            tile.isnew = false;
-            return;
-        } else {
-            if (otherTile.hasInput) {
-                if (
-                    otherTile.spaceType.length == 0 ||
-                    otherTile.spaceType.includes(item)
-                ) {
-                    if (otherTile.space.length < otherTile.maxSpace) {
-                        otherTile.space.push(item);
-                        tile.space.shift();
-                        map[otherTile.y][otherTile.x] = otherTile;
-                        map[tile.x][tile.y] = tile;
-                    }
-                }
+        case 84: //t
+            if (tool == toolMax) {
+                tool = 0;
+            } else {
+                tool++;
             }
-        }
+            break;
     }
 }
 

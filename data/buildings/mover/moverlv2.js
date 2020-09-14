@@ -5,7 +5,7 @@ exports.class = class mover extends T {
         this.canUpdate = true;
         this.maxSpace = 1;
         this.hasInput = true;
-        this.updateCooldown = 20;
+        this.updateCooldown = 10;
         this.spaceType = [];
         this.update = (world) => {
             var facingTo = world.facingTo(this.x, this.y, this.facing);
@@ -14,6 +14,6 @@ exports.class = class mover extends T {
     }
 }
 
-exports.texture = "textures/mover.png";
-exports.name = "mover";
-exports.price = "2";
+exports.texture = "textures/mover2.png";
+exports.name = "mover lv 2";
+exports.price = "7";
