@@ -32,8 +32,6 @@ jobs:
         uses: actions/checkout@v3
       - name: nodeSetup
         uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node_version }}
       - name: nodeRun
         run: |
           npm install
@@ -43,8 +41,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # Upload entire repository
-          path: './prod'
+          path: 'prod/'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
