@@ -1,0 +1,58 @@
+{
+    "buildings": [
+        {
+            "name": "mover",
+            "texture": "mover.png",
+            "cost": {
+                "energy": 2
+            },
+            "updateTicks": 20,
+            "storage": 1,
+            "upgrades": [
+                {
+                    "cost": {
+                        "energy": 7
+                    },
+                    "mod": {
+                        "updateTicks": 10
+                    },
+                    "texture": "mover2.png"
+                }
+            ]
+        },
+        {
+            "name": "water-collector",
+            "texture": "water-collector.png",
+            "cost": {
+                "energiy": 20
+            },
+            "updateTicks": 40,
+            "action": {
+                "make": {
+                    "product": {
+                        "water": 1
+                    }
+                },
+                "move": {
+                    "dir": {
+                        "water": 1
+                    }
+                }
+            }
+        }
+    ],
+    "materials": [
+        {
+            "name": "energy",
+            "texture": "energy.png"
+        },
+        {
+            "name": "water",
+            "texture": "water.png"
+        },
+        {
+            "name": "steam",
+            "texture": "steam.png"
+        }
+    ]
+}

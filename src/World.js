@@ -1,5 +1,5 @@
 var TC = require("./TileCreator");
-var DataStorage = require("./Modules/DataStorage");
+var DataStorage = require("./DataStorage");
 exports.Map = class Map {
     constructor() {
 

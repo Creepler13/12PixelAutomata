@@ -1,4 +1,4 @@
-const DataManager = require("./Modules/DataManager");
+const DataManager = require("./DataManager");
 exports.TileCreator = class TileCreator extends DataManager.DataManager {
 
     constructor() {

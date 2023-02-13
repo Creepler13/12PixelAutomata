@@ -1,3 +1,15 @@
-# 12PixelAutomata
+# 🚀 Welcome to your new awesome project!
 
-litte Cellular Automata(not really obeying the law of Cellular Automata) Test
+This project has been created using **webpack-cli**, you can now run
+
+```
+npm run build
+```
+
+or
+
+```
+yarn build
+```
+
+to bundle your application
