@@ -7,7 +7,7 @@ const isProduction = process.env.NODE_ENV == "production";
 
 const stylesHandler = "style-loader";
 
-const buildpath = isProduction?"prod":"dev";
+const buildpath = isProduction ? "prod" : "dev";
 
 const config = {
     entry: "./src/main.js",
