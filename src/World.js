@@ -1,45 +1,57 @@
+const Tile = require("./Tile");
+
 require("./DataManager");
 exports.Map = class Map {
     constructor() {
-
         this.map = [];
+    }
+    /**
+     *
+     * @param {number} x
+     * @param {number} y
+     * @returns {Tile} tile
+     */
+    get(x, y) {
+        if (this.posExits(x, y)) return this.map[x][y];
+        else return undefined;
+    }
 
-        this.get = (x, y) => {
-            return this.map[x][y];
+    init(maxX, maxY) {
+        this.maxX = maxX;
+        this.maxY = maxY;
+        for (let x = 0; x < maxX; x++) {
+            this.map.push([]);
         }
+    }
 
-        this.facings = {
-            "UP": 0,
-            "RIGHT": 1,
-            "DOWN": 2,
-            "LEFT": 3
-        }
+    /*
+    init() {
+        return new Promise((res) => {
+            this.TileCreator.load("data").then(() => {
+                var keys = this.TileCreator.getKeys("materials");
+                keys.forEach((e) => {
+                    this.Materials.set(e, 0);
+                });
+                res();
+            });
+        });
+    }
+*/
 
+    /**
+     *
+     * @param {Tile} tile
+     */
+    set(tile) {
+        if (!this.posExits(tile.x, tile.y)) return false;
+        this.map[tile.x][tile.y] = tile;
+        return true;
+    }
 
-
-        this.init = () => {
-            return new Promise((res) => {
-                this.TileCreator.load("data").then(() => {
-                    var keys = this.TileCreator.getKeys("materials");
-                    keys.forEach((e) => {
-                        this.Materials.set(e, 0);
-                    })
-                    res();
-                })
-            })
-        }
-
-        this.set = (x, y, type, facing, level) => {
-            if (this.map[x] === undefined) {
-                this.map[x] = [];
-            }
-            this.map[x][y] = 
-        }
-
-        this.update = (x, y) => {
-            this.get(x, y).doUpdate(this);
-        }
-
+    update(x, y) {
+        this.get(x, y).update();
+    }
+    /*
         this.createNewMaterial = (x2, y2, material) => {
             var to = this.get(x2, y2);
             var temp = 0;
@@ -75,62 +87,25 @@ exports.Map = class Map {
             });
             return count;
         }
+*/
 
-        this.facingTo = (x, y, facing) => {
-            switch (facing) {
-                case this.facings.UP: //up
-                    return { "x": x, "y": y - 1 }
-                case this.facings.LEFT: //left
-                    return { "x": x - 1, "y": y }
-                case this.facings.RIGHT: //right
-                    return { "x": x + 1, "y": y }
-                case this.facings.DOWN: //down
-                    return { "x": x, "y": y + 1 }
-            }
-
-        }
-
-        this.facingToAngle = (facing) => {
-            switch (facing) {
-                case this.facings.UP:
-                    return 90 * Math.PI / 180;
-                case this.facings.DOWN:
-                    return -90 * Math.PI / 180;
-                case this.facings.LEFT:
-                    return 0;
-                case this.facings.RIGHT:
-                    return -180 * Math.PI / 180;
-            }
-        }
-
-        this.reverseFacing = (facing) => {
-            switch (facing) {
-                case this.facings.UP:
-                    return this.facings.DOWN;
-                case this.facings.DOWN:
-                    return this.facings.UP;
-                case this.facings.LEFT:
-                    return this.facings.RIGHT;
-                case this.facings.RIGHT:
-                    return this.facings.LEFT;
-            }
-        }
-
-        this.levelUp = (x, y) => {
-            var tile = this.get(x, y)
-            this.set(x, y, "buildings", tile.type, tile.facing, tile.level + 1);
-        }
-
-        this.reset = () => {
-            this.map = [];
-        }
-
-        this.getXLength = () => {
-            return this.map.length
-        }
-
-        this.getYLength = (i) => {
-            return this.map[i] === undefined ? 0 : this.map[i].length
-        }
+    levelUp(x, y) {
+        var tile = this.get(x, y);
+        this.set(x, y, "buildings", tile.type, tile.facing, tile.level + 1);
     }
-}
+    reset() {
+        this.map = [];
+    }
+
+    getXLength() {
+        return this.map.length;
+    }
+
+    posExits(x, y) {
+        return x >= 0 && y >= 0 && x < this.maxX && y < this.maxY;
+    }
+
+    getYLength(i) {
+        return this.map[i] === undefined ? 0 : this.map[i].length;
+    }
+};

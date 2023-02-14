@@ -3,15 +3,19 @@ var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 var selectetDisplay = document.getElementById("selectetDisplay");
 var baseDisplay = document.getElementById("baseDisplay");
+const Tile = require("./Tile");
+const Building = require("./tiles/Building");
+const { facingToAngle, facings } = require("./utils/DirectionUtils");
 var mapClass = require("./World");
-let Building = require("./Building");
-const actions = require("./Action");
-console.log(actions)
-var World = new mapClass.Map();
-World.init().then(() => {
-    startGame();
-});
+window.world = new mapClass.Map();
+
+/** @type {mapClass.Map} */
+let World = window.world;
+
 var mapDimensions = 50;
+
+startGame();
+
 var x, y, selectet, maxSelectet, tool;
 var toolMax = 2;
 
@@ -31,47 +35,52 @@ function startGame() {
     selectet = 0;
     tool = 0;
     maxSelectet = 0;
-    for (const key in World.TileCreator.Data["buildings"].data) {
-        if (World.TileCreator.getData("buildings", key, 1, "canBuild") === undefined) maxSelectet++;
-    }
-    selectetDisplay.textContent =
-        "Selectet building: " + World.TileCreator.getData("buildings", getSelectet(), 1, "name");
-    World.reset();
-    for (let index = 0; index < mapDimensions; index++) {
-        for (let indexy = 0; indexy < mapDimensions; indexy++) {
-            World.set(indexy, index, "buildings", "empty", 0, 1);
-        }
-    }
-    World.set(10, 10, "buildings", "base", 0, 1);
-    World.Materials.set("water", 20);
+
+    maxSelectet = Object.keys(window.gameData.buildings).length;
+
+    selectetDisplay.textContent = "Selection WIP";
+    //    "Selectet building: " + World.TileCreator.getData("buildings", getSelectet(), 1, "name");
+    World.init(50, 50);
+
+    World.set(new Building(10, 10, facings.UP, "mover"));
+
+    console.log(World);
+    //World.set(10, 10, "buildings", "base", 0, 1);
+    //World.Materials.set("water", 20);
     var interval = setInterval(gameloop, 50);
 }
 
 function gameloop() {
-    for (let index = 0; index < World.getXLength(); index++) {
-        for (let indexy = 0; indexy < World.getYLength(0); indexy++) {
-            var tile = World.get(index, indexy);
+    for (let index = 0; index < World.maxX; index++) {
+        for (let indexy = 0; indexy < World.maxY; indexy++) {
+            let tile = World.get(index, indexy);
 
-            World.update(index, indexy);
+            if (!tile) continue;
+
+            tile.update();
 
             ctx.translate(index * 12 + 6, indexy * 12 + 6);
-            ctx.rotate(World.facingToAngle(tile.facing));
-            ctx.drawImage(
-                World.TileCreator.getTexture("buildings", tile.type, tile.level),
-                0 - 6,
-                0 - 6,
-                12,
-                12
-            );
-            ctx.rotate(-World.facingToAngle(tile.facing));
+            ctx.rotate(facingToAngle(tile.facing));
+            ctx.drawImage(tile.getTexture(), 0 - 6, 0 - 6, 12, 12);
+            ctx.rotate(-facingToAngle(tile.facing));
             ctx.translate(-(index * 12 + 6), -(indexy * 12 + 6));
 
-            if (tile.space.length != 0) {
+            if (tile.type == Tile.types.building) {
                 //TODO
+
+                ctx.drawImage(
+                    window.gameData.materials["water"].texture,
+                    index * 12 + 2,
+                    indexy * 12 + 2,
+                    8,
+                    8
+                );
+
+                /*
                 switch (tile.space.length) {
                     case 1:
                         ctx.drawImage(
-                            World.TileCreator.getTexture("materials", tile.space[0], 1),
+                            window.gameData.materials[tile.storage.],
                             index * 12 + 2,
                             indexy * 12 + 2,
                             8,
@@ -96,20 +105,22 @@ function gameloop() {
                         break;
                 }
             }
+*/
+            }
         }
     }
-    drawUI();
+    //   drawUI();
 }
 
 function drawUI() {
     ctx.globalAlpha = 0.6;
     ctx.translate(x * 12 + 6, y * 12 + 6);
     if (tool === 0) {
-        ctx.rotate(World.facingToAngle(facing));
+        ctx.rotate(facingToAngle(facing));
 
         var selectetColor = World.TileCreator.getTexture("buildings", getSelectet(), 1);
         ctx.drawImage(selectetColor, 0 - 6, 0 - 6, 12, 12);
-        ctx.rotate(-World.facingToAngle(facing));
+        ctx.rotate(-facingToAngle(facing));
     } else {
         var selectetColor = World.TileCreator.getTexture("ui", tools[tool], 1);
         ctx.drawImage(selectetColor, 0 - 6, 0 - 6, 12, 12);

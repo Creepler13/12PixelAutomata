@@ -1,6 +1,38 @@
 {
     "buildings": [
         {
+            "name": "boiler",
+            "texture": "factory.png",
+            "cost": {
+                "energiy": 50
+            },
+            "updateTicks": 40,
+            "storage": 1,
+            "allowedInput": [
+                "water"
+            ],
+            "actionMode": "cicle",
+            "action": [
+                {
+                    "type": "make",
+                    "data": {
+                        "cost": {
+                            "water": "1"
+                        },
+                        "product": {
+                            "energy": 1
+                        }
+                    }
+                },
+                {
+                    "type": "move",
+                    "data": {
+                        "dir": "energy"
+                    }
+                }
+            ]
+        },
+        {
             "name": "splitter",
             "texture": "splitter.png",
             "cost": {
@@ -24,17 +56,13 @@
                 {
                     "type": "move",
                     "data": {
-                        "L": {
-                            "*": 1
-                        }
+                        "LEFT": "*"
                     }
                 },
                 {
                     "type": "move",
                     "data": {
-                        "R": {
-                            "*": 1
-                        }
+                        "RIGHT": "*"
                     }
                 }
             ]
@@ -62,9 +90,7 @@
                 {
                     "type": "move",
                     "data": {
-                        "dir": {
-                            "*": 1
-                        }
+                        "dir": "*"
                     }
                 }
             ]
@@ -89,9 +115,7 @@
                 {
                     "type": "move",
                     "data": {
-                        "dir": {
-                            "water": 1
-                        }
+                        "dir": "water"
                     }
                 }
             ]

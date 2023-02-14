@@ -1,13 +1,27 @@
-const Tile = require("./Tile");
-const { Action, actions } = require("./Action");
-const BuildingStorage = require("./buildingStorage");
+const Tile = require("../Tile");
+const actions = require("../Action").loadActions()
+const BuildingStorage = require("../buildingStorage");
+const { facings } = require("../utils/DirectionUtils");
 module.exports = class Building extends Tile {
+    /**
+     *
+     * @param {number} x
+     * @param {number} y
+     * @param {facings} facing
+     * @param {string} id
+     */
     constructor(x, y, facing, id) {
-        super(x, y, Tile.types.building, id);
-        this.facing = facing;
+        super(x, y, Tile.types.building, facing, id);
         this.level = 1;
         this.storage = new BuildingStorage(this);
         this.currentUpdateTick = 0;
+    }
+
+    getTexture() {
+        let data = this.getData();
+        if (this.level == 1) return data.texture;
+        if (data.upgrade)
+            if (data.upgrade[data.level - 2]) return data.upgrade[data.level - 2].texture;
     }
 
     upgrade() {
@@ -57,6 +71,7 @@ module.exports = class Building extends Tile {
  *      name:string
  *      texture:HTMLImageElement
  *      updateTicks:?number
+ *      allowedInput:?[string]
  *      storage:?number
  *      cost:{}
  *      upgrade:?[{
