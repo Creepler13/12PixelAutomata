@@ -1,9 +1,7 @@
-let TileCreator = require("./TileCreator");
+require("./DataManager");
 exports.Map = class Map {
     constructor() {
 
-        this.TileCreator = new TileCreator();
-      
         this.map = [];
 
         this.get = (x, y) => {
@@ -17,6 +15,8 @@ exports.Map = class Map {
             "LEFT": 3
         }
 
+
+
         this.init = () => {
             return new Promise((res) => {
                 this.TileCreator.load("data").then(() => {
@@ -29,11 +29,11 @@ exports.Map = class Map {
             })
         }
 
-        this.set = (x, y, dir, type, facing, level) => {
+        this.set = (x, y, type, facing, level) => {
             if (this.map[x] === undefined) {
                 this.map[x] = [];
             }
-            this.map[x][y] = this.TileCreator.createTile(x, y, dir, type, facing, level);
+            this.map[x][y] = 
         }
 
         this.update = (x, y) => {

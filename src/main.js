@@ -4,6 +4,9 @@ var ctx = canvas.getContext("2d");
 var selectetDisplay = document.getElementById("selectetDisplay");
 var baseDisplay = document.getElementById("baseDisplay");
 var mapClass = require("./World");
+let Building = require("./Building");
+const actions = require("./Action");
+console.log(actions)
 var World = new mapClass.Map();
 World.init().then(() => {
     startGame();
