@@ -1,11 +1,9 @@
-var TC = require("./TileCreator");
-var DataStorage = require("./DataStorage");
+let TileCreator = require("./TileCreator");
 exports.Map = class Map {
     constructor() {
 
-        this.TileCreator = new TC.TileCreator();
-        this.Materials = new DataStorage.DataStorage();
-
+        this.TileCreator = new TileCreator();
+      
         this.map = [];
 
         this.get = (x, y) => {

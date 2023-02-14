@@ -4,21 +4,35 @@ moduleFile.forEach((modul) => {
     modules.push(require("./data/" + modul + ".json"));
 });
 
+window.gameData = { buildings: {}, materials: {} };
+let gameData=window.gameData;
 modules.forEach((module) => {
-    if (module.buildings) {
-        module.buildings.forEach((building) => {
-            building.texture = makeImgObj(building.texture);
-            if (building.upgrades)
-                for (let index = 0; index < building.upgrades.length; index++) {
-                    let upgrade = building.upgrades[index];
-                    if (!upgrade.texture)
-                        if (index == 0) upgrade.texture = building.texture;
-                        else upgrade.texture = building.upgrades[0].texture;
-                    else upgrade.texture = makeImgObj(upgrade.texture);
-                }
-        });
-    }
+    if (module.buildings) initBuildings(module.buildings);
+    if (module.materials) initMaterials(module.materials);
 });
+
+function initMaterials(materials) {
+    materials.forEach((material) => {
+        material.texture = makeImgObj(material.texture);
+        gameData.materials[material.name] = material;
+    });
+}
+
+function initBuildings(buildings) {
+    buildings.forEach((building) => {
+        building.texture = makeImgObj(building.texture);
+        if (building.upgrades)
+            for (let index = 0; index < building.upgrades.length; index++) {
+                let upgrade = building.upgrades[index];
+                if (!upgrade.texture)
+                    if (index == 0) upgrade.texture = building.texture;
+                    else upgrade.texture = building.upgrades[0].texture;
+                else upgrade.texture = makeImgObj(upgrade.texture);
+            }
+
+        gameData.buildings[building.name] = building;
+    });
+}
 
 function makeImgObj(text) {
     let img = document.createElement("img");
@@ -26,15 +40,13 @@ function makeImgObj(text) {
     return img;
 }
 
+
 module.exports.DataManager = class DataManager {
     constructor() {}
 
     data = {};
 
-    load() {
-        console.log(moduleFile);
-        console.log(modules);
-    }
+    load() {console.log(gameData)}
 
     /*  load(link){
             return new Promise((resolve) => {
