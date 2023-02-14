@@ -1,6 +1,40 @@
 {
     "buildings": [
         {
+        "name": "splitter",
+            "texture": "splitter.png",
+            "cost": {
+                "energy": 10
+            },
+            "updateTicks": 20,
+            "storage": 1,
+            "upgrades": [
+                {
+                    "cost": {
+                        "energy": 20
+                    },
+                    "mod": {
+                        "updateTicks": 10
+                    },
+                    "texture": "splitter2.png"
+                }
+            ],
+            "actionMode":"cicle",
+            "action":{
+                "move":{
+                    "L":{
+                        "*":1
+                    }
+                },
+                "move":{
+                    "R":{
+                        "*":1
+                    }
+                }
+            }
+            
+        }   ,
+        {
             "name": "mover",
             "texture": "mover.png",
             "cost": {
@@ -18,7 +52,15 @@
                     },
                     "texture": "mover2.png"
                 }
-            ]
+            ],
+            "action":{
+                "move":{
+                    "dir":{
+                        "*":1
+                    }
+                }
+            }
+            
         },
         {
             "name": "water-collector",
@@ -27,6 +69,7 @@
                 "energiy": 20
             },
             "updateTicks": 40,
+            "actionMode":"cicle",
             "action": {
                 "make": {
                     "product": {
