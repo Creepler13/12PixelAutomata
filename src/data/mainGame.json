@@ -1,7 +1,7 @@
 {
     "buildings": [
         {
-        "name": "splitter",
+            "name": "splitter",
             "texture": "splitter.png",
             "cost": {
                 "energy": 10
@@ -19,21 +19,26 @@
                     "texture": "splitter2.png"
                 }
             ],
-            "actionMode":"cicle",
-            "action":{
-                "move":{
-                    "L":{
-                        "*":1
+            "actionMode": "cicle",
+            "action": [
+                {
+                    "type": "move",
+                    "data": {
+                        "L": {
+                            "*": 1
+                        }
                     }
                 },
-                "move":{
-                    "R":{
-                        "*":1
+                {
+                    "type": "move",
+                    "data": {
+                        "R": {
+                            "*": 1
+                        }
                     }
                 }
-            }
-            
-        }   ,
+            ]
+        },
         {
             "name": "mover",
             "texture": "mover.png",
@@ -53,14 +58,16 @@
                     "texture": "mover2.png"
                 }
             ],
-            "action":{
-                "move":{
-                    "dir":{
-                        "*":1
+            "action": [
+                {
+                    "type": "move",
+                    "data": {
+                        "dir": {
+                            "*": 1
+                        }
                     }
                 }
-            }
-            
+            ]
         },
         {
             "name": "water-collector",
@@ -69,19 +76,25 @@
                 "energiy": 20
             },
             "updateTicks": 40,
-            "actionMode":"cicle",
-            "action": {
-                "make": {
-                    "product": {
-                        "water": 1
+            "actionMode": "cicle",
+            "action": [
+                {
+                    "type": "make",
+                    "data": {
+                        "product": {
+                            "water": 1
+                        }
                     }
                 },
-                "move": {
-                    "dir": {
-                        "water": 1
+                {
+                    "type": "move",
+                    "data": {
+                        "dir": {
+                            "water": 1
+                        }
                     }
                 }
-            }
+            ]
         }
     ],
     "materials": [
