@@ -69,6 +69,7 @@
                 "energiy": 20
             },
             "updateTicks": 40,
+            "actionMode":"cicle",
             "action": {
                 "make": {
                     "product": {
