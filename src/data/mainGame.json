@@ -2,15 +2,15 @@
     "buildings": [
         {
             "name": "boiler",
-            "texture": "factory.png",
+            "texture": "buildings/factory.png",
             "cost": {
-                "energiy": 50
+                "energy": 50
             },
             "updateTicks": 40,
             "storage": 1,
-            "allowedInput": [
-                "water"
-            ],
+            "allowedInput": {
+                "water": 1
+            },
             "actionMode": "cicle",
             "action": [
                 {
@@ -34,12 +34,15 @@
         },
         {
             "name": "splitter",
-            "texture": "splitter.png",
+            "texture": "buildings/splitter.png",
             "cost": {
                 "energy": 10
             },
             "updateTicks": 20,
             "storage": 1,
+            "allowedInput": {
+                "*": 1
+            },
             "upgrades": [
                 {
                     "cost": {
@@ -48,7 +51,7 @@
                     "mod": {
                         "updateTicks": 10
                     },
-                    "texture": "splitter2.png"
+                    "texture": "buildings/splitter2.png"
                 }
             ],
             "actionMode": "cicle",
@@ -69,7 +72,7 @@
         },
         {
             "name": "mover",
-            "texture": "mover.png",
+            "texture": "buildings/mover.png",
             "cost": {
                 "energy": 2
             },
@@ -83,9 +86,12 @@
                     "mod": {
                         "updateTicks": 10
                     },
-                    "texture": "mover2.png"
+                    "texture": "buildings/mover2.png"
                 }
             ],
+            "allowedInput": {
+                "*": 1
+            },
             "action": [
                 {
                     "type": "move",
@@ -97,7 +103,7 @@
         },
         {
             "name": "water-collector",
-            "texture": "water-collector.png",
+            "texture": "buildings/water-collector.png",
             "cost": {
                 "energiy": 20
             },
@@ -124,15 +130,15 @@
     "materials": [
         {
             "name": "energy",
-            "texture": "energy.png"
+            "texture": "materials/energy.png"
         },
         {
             "name": "water",
-            "texture": "water.png"
+            "texture": "materials/water.png"
         },
         {
             "name": "steam",
-            "texture": "steam.png"
+            "texture": "materials/steam.png"
         }
     ]
 }

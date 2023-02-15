@@ -11,11 +11,13 @@ module.exports = class BuildingStorage {
 
     storage = {};
 
-    accepts(material) {
+    accepts(material, ammount) {
         let data = this.building.getData();
         if (!data.allowedInput) return false;
-        return data.allowedInput.some(
-            (allowedMaterial) => allowedMaterial == "*" || allowedMaterial == material
+        if (!data.allowedInput[material] && !data.allowedInput["*"]) return false;
+        return (
+            (this.storage[material] ? this.storage[material] : 0) + ammount <=
+            data.allowedInput[data.allowedInput["*"] ? "*" : material]
         );
     }
 
@@ -35,10 +37,10 @@ module.exports = class BuildingStorage {
     }
 
     canAdd(material, ammount) {
-        let data = this.building.getData().storage;
+        let data = this.building.getData();
         if (!data.storage) return false;
-        let storageAmmount = BuildingStorage.storageAmmount(this.storage);
-        return this.accepts(material) && storageAmmount + ammount <= data.storage;
+        let storageAmmount = this.storageAmmount();
+        return this.accepts(material, ammount) && storageAmmount + ammount <= data.storage;
     }
 
     has(material, amount) {
@@ -46,9 +48,9 @@ module.exports = class BuildingStorage {
         else return this.storage[material] >= amount;
     }
 
-    static storageAmmount(storage) {
+    storageAmmount() {
         let ammount = 0;
-        Object.values(storage).forEach((item) => (ammount = ammount + item));
+        Object.values(this.storage).forEach((item) => (ammount = ammount + item));
         return ammount;
     }
 };

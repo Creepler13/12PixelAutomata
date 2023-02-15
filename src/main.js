@@ -3,6 +3,7 @@ var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 var selectetDisplay = document.getElementById("selectetDisplay");
 var baseDisplay = document.getElementById("baseDisplay");
+const { RenderBuilding } = require("./Renderer");
 const Tile = require("./Tile");
 const Building = require("./tiles/Building");
 const { facingToAngle, facings } = require("./utils/DirectionUtils");
@@ -41,6 +42,11 @@ function startGame() {
     selectetDisplay.textContent = "Selection WIP";
     //    "Selectet building: " + World.TileCreator.getData("buildings", getSelectet(), 1, "name");
     World.init(50, 50);
+    World.set(new Building(9, 10, facings.RIGHT, "mover"));
+
+    World.set(new Building(9, 9, facings.DOWN, "mover"));
+
+    World.set(new Building(10, 9, facings.LEFT, "mover"));
 
     World.set(new Building(10, 10, facings.UP, "mover"));
 
@@ -59,12 +65,16 @@ function gameloop() {
 
             tile.update();
 
+            if (tile.type == Tile.types.building) RenderBuilding(ctx, tile);
+
+            /*
             ctx.translate(index * 12 + 6, indexy * 12 + 6);
             ctx.rotate(facingToAngle(tile.facing));
             ctx.drawImage(tile.getTexture(), 0 - 6, 0 - 6, 12, 12);
             ctx.rotate(-facingToAngle(tile.facing));
             ctx.translate(-(index * 12 + 6), -(indexy * 12 + 6));
-
+*/
+            /*
             if (tile.type == Tile.types.building) {
                 //TODO
 
@@ -76,7 +86,7 @@ function gameloop() {
                     8
                 );
 
-                /*
+              
                 switch (tile.space.length) {
                     case 1:
                         ctx.drawImage(
@@ -106,7 +116,6 @@ function gameloop() {
                 }
             }
 */
-            }
         }
     }
     //   drawUI();

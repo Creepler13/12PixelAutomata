@@ -14,6 +14,8 @@ module.exports = class Move extends Action {
          */
         let world = window.world;
 
+        if (building.storage.storageAmmount() <= 0) return;
+
         Object.keys(data).forEach((direction) => {
             let facing;
             if (direction == "dir") facing = building.facing;
@@ -24,8 +26,10 @@ module.exports = class Move extends Action {
             let otherTile = world.get(pos.x, pos.y);
             if (!otherTile) return;
             if (!otherTile.storage.canAdd(data[direction], 1)) return;
-            building.storage.remove(data[direction], 1);
-            otherTile.storage.add(data[direction], 1);
+            let material =
+                data[direction] == "*" ? Object.keys(building.storage.storage)[0] : data[direction];
+            building.storage.remove(material, 1);
+            otherTile.storage.add(material, 1);
         });
     }
 };
