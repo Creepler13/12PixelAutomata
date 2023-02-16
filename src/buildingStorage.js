@@ -11,36 +11,61 @@ module.exports = class BuildingStorage {
 
     storage = {};
 
+    bufferedStorage = {};
+
+    onBeforeTick() {
+        this.bufferedStorage = {};
+    }
+
+    onAfterTick() {
+        Object.keys(this.bufferedStorage).forEach((material) => {
+            if (!this.storage[material]) this.storage[material] = 0;
+            this.storage[material] = this.storage[material] + this.bufferedStorage[material];
+            if (this.storage[material] <= 0) delete this.storage[material];
+        });
+    }
+
     accepts(material, ammount) {
         let data = this.building.getData();
         if (!data.allowedInput) return false;
         if (!data.allowedInput[material] && !data.allowedInput["*"]) return false;
         return (
-            (this.storage[material] ? this.storage[material] : 0) + ammount <=
+            (this.storage[material] ? this.storage[material] : 0) +
+                (this.bufferedStorage[material] ? this.bufferedStorage[material] : 0) +
+                ammount <=
             data.allowedInput[data.allowedInput["*"] ? "*" : material]
         );
     }
 
-    remove(material, amount) {
+    remove(material, ammount) {
         if (this.storage[material])
-            if (this.storage[material] <= amount) delete this.storage[material];
-            else this.storage[material] = this.storage[material] - amount;
+            if (!this.bufferedStorage[material])
+                //      if (this.storage[material] <= amount) delete this.bufferedStorage[material];
+
+                this.bufferedStorage[material] = -ammount;
+            else this.bufferedStorage[material] = this.bufferedStorage[material] - ammount;
     }
 
     add(material, ammount, ignoreMaxStorage) {
         if (!ignoreMaxStorage) if (!this.canAdd(material, ammount)) return false;
 
-        if (!this.storage[material]) this.storage[material] = 0;
-        this.storage[material] = this.storage[material] + ammount;
+        if (!this.bufferedStorage[material]) this.bufferedStorage[material] = ammount;
+        else this.bufferedStorage[material] = this.bufferedStorage[material] + ammount;
 
         return true;
     }
 
     canAdd(material, ammount) {
         let data = this.building.getData();
-        if (!data.storage) return false;
-        let storageAmmount = this.storageAmmount();
-        return this.accepts(material, ammount) && storageAmmount + ammount <= data.storage;
+        if (!data.allowedInput) return false;
+
+        return (
+            this.accepts(material, ammount) &&
+            this.storageAmmount() +
+                (this.bufferedStorage[material] ? this.bufferedStorage[material] : 0) +
+                ammount <=
+                this.storageAmmount(data.allowedInput)
+        );
     }
 
     has(material, amount) {
@@ -48,9 +73,11 @@ module.exports = class BuildingStorage {
         else return this.storage[material] >= amount;
     }
 
-    storageAmmount() {
+    storageAmmount(optinalStorage) {
         let ammount = 0;
-        Object.values(this.storage).forEach((item) => (ammount = ammount + item));
+        Object.values(optinalStorage ? optinalStorage : this.storage).forEach(
+            (item) => (ammount = ammount + item)
+        );
         return ammount;
     }
 };

@@ -42,18 +42,21 @@ function startGame() {
     selectetDisplay.textContent = "Selection WIP";
     //    "Selectet building: " + World.TileCreator.getData("buildings", getSelectet(), 1, "name");
     World.init(50, 50);
-    World.set(new Building(9, 10, facings.RIGHT, "mover"));
+    World.set(new Building(9, 10, facings.UP, "mover"));
 
-    World.set(new Building(9, 9, facings.DOWN, "mover"));
+    World.set(new Building(9, 9, facings.UP, "mover"));
 
-    World.set(new Building(10, 9, facings.LEFT, "mover"));
+    World.set(new Building(10, 9, facings.UP, "mover"));
 
     World.set(new Building(10, 10, facings.UP, "mover"));
-
+    World.set(new Building(10, 12, facings.UP, "water-collector"));
+    World.set(new Building(10, 11, facings.UP, "boiler"));
+    World.set(new Building(10, 10, facings.UP, "dynamo"));
     console.log(World);
+
     //World.set(10, 10, "buildings", "base", 0, 1);
     //World.Materials.set("water", 20);
-    var interval = setInterval(gameloop, 50);
+    var interval = setInterval(gameloop, 20);
 }
 
 function gameloop() {
@@ -63,61 +66,31 @@ function gameloop() {
 
             if (!tile) continue;
 
-            tile.update();
-
-            if (tile.type == Tile.types.building) RenderBuilding(ctx, tile);
-
-            /*
-            ctx.translate(index * 12 + 6, indexy * 12 + 6);
-            ctx.rotate(facingToAngle(tile.facing));
-            ctx.drawImage(tile.getTexture(), 0 - 6, 0 - 6, 12, 12);
-            ctx.rotate(-facingToAngle(tile.facing));
-            ctx.translate(-(index * 12 + 6), -(indexy * 12 + 6));
-*/
-            /*
-            if (tile.type == Tile.types.building) {
-                //TODO
-
-                ctx.drawImage(
-                    window.gameData.materials["water"].texture,
-                    index * 12 + 2,
-                    indexy * 12 + 2,
-                    8,
-                    8
-                );
-
-              
-                switch (tile.space.length) {
-                    case 1:
-                        ctx.drawImage(
-                            window.gameData.materials[tile.storage.],
-                            index * 12 + 2,
-                            indexy * 12 + 2,
-                            8,
-                            8
-                        );
-                        break;
-                    case 2:
-                        ctx.drawImage(
-                            World.TileCreator.getTexture("materials", tile.space[0], 1),
-                            index * 12 + 2,
-                            indexy * 12 + 6,
-                            8,
-                            4
-                        );
-                        ctx.drawImage(
-                            World.TileCreator.getTexture("materials", tile.space[1], 1),
-                            index * 12 + 2,
-                            indexy * 12 + 6,
-                            8,
-                            4
-                        );
-                        break;
-                }
-            }
-*/
+            if (tile.type == Tile.types.building) tile.storage.onBeforeTick();
         }
     }
+
+    for (let index = 0; index < World.maxX; index++) {
+        for (let indexy = 0; indexy < World.maxY; indexy++) {
+            let tile = World.get(index, indexy);
+
+            if (!tile) continue;
+
+            tile.update();
+        }
+    }
+
+    for (let index = 0; index < World.maxX; index++) {
+        for (let indexy = 0; indexy < World.maxY; indexy++) {
+            let tile = World.get(index, indexy);
+            if (!tile) continue;
+            if (tile.type == Tile.types.building) {
+                tile.storage.onAfterTick();
+                RenderBuilding(ctx, tile);
+            }
+        }
+    }
+
     //   drawUI();
 }
 

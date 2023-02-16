@@ -1,4 +1,4 @@
-const  Action  = require("../Action");
+const Action = require("../Action");
 const Building = require("../tiles/Building");
 module.exports = class Make extends Action {
     /**
@@ -16,11 +16,20 @@ module.exports = class Make extends Action {
 
         if (!hasMaterials) return;
 
-        Object.keys(data.cost).forEach((material) =>
-            building.storage.remove(material, data.cost[material])
-        );
-        Object.keys(data.product).forEach((material) =>
-            building.storage.add(material, data.cost[material], true)
-        );
+        if (
+            Object.keys(data.product).some(
+                (material) => !building.storage.canAdd(material, data.product[material])
+            )
+        )
+            return;
+
+        if (data.cost)
+            Object.keys(data.cost).forEach((material) =>
+                building.storage.remove(material, data.cost[material])
+            );
+        if (data.product)
+            Object.keys(data.product).forEach((material) =>
+                building.storage.add(material, data.product[material])
+            );
     }
 };
