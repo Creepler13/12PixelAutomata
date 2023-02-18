@@ -3,6 +3,7 @@ const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const { LoaderOptionsPlugin } = require("webpack");
 const isProduction = process.env.NODE_ENV == "production";
 
 const stylesHandler = "style-loader";
@@ -16,6 +17,10 @@ const config = {
         filename: "[name].js",
         chunkFilename: "[name].bundle.js",
     },
+    resolve: {
+        extensions: ["*", ".js", ".jsx"],
+    },
+
     plugins: [
         new HtmlWebpackPlugin({
             template: "./src/index.html",
@@ -24,13 +29,27 @@ const config = {
             __DEBUG: true,
             __CHEATS: true,
         }),
-
+      
         // Add your plugins here
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/
     ],
-
     module: {
         rules: [
+            {
+                test: /\.jsx?$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        presets:[
+                            "@babel/preset-react"
+                        ],
+                        cacheDirectory: true,
+                        cacheCompression: false,
+                        envName: isProduction ? "production" : "development",
+                    },
+                },
+            },
             {
                 test: /\.css$/i,
                 use: [stylesHandler, "css-loader"],

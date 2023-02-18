@@ -1,3 +1,4 @@
+require("./justLoad")
 var canvas = document.getElementById("canvas");
 // @ts-ignore
 var ctx = canvas.getContext("2d");
@@ -6,8 +7,12 @@ var baseDisplay = document.getElementById("baseDisplay");
 const { RenderBuilding } = require("./Renderer");
 const Tile = require("./Tile");
 const Building = require("./tiles/Building");
+const { InitUI } = require("./ui/mainUI");
 const { facingToAngle, facings } = require("./utils/DirectionUtils");
+
+InitUI();
 var mapClass = require("./World");
+
 window.world = new mapClass.Map();
 
 /** @type {mapClass.Map} */
@@ -41,7 +46,7 @@ function startGame() {
 
     selectetDisplay.textContent = "Selection WIP";
     //    "Selectet building: " + World.TileCreator.getData("buildings", getSelectet(), 1, "name");
-    World.init(50, 50);
+    World.init(mapDimensions, mapDimensions);
     World.set(new Building(9, 10, facings.UP, "mover"));
 
     World.set(new Building(9, 9, facings.UP, "mover"));
