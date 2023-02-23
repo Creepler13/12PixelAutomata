@@ -1,3 +1,48 @@
 #buildings {
+    text-align: center;
     float: right;
+    margin-right: 1%;
+    color: #fff;
+    font-size: 25px;
+
+    width: 30%;
+    background: #f11b37;
+}
+
+#buildingList {
+    list-style-type: none;
+}
+
+#buildingsTab {
+    margin-top: 5%;
+    overflow: hidden;
+    overflow-y: scroll;
+    background: #6e7b85;
+}
+
+#building {
+    user-select: none;
+    vertical-align: top;
+    color: #fff;
+    font-size: medium;
+    text-decoration: none;
+    float: Left;
+    padding: 5% 5%;
+    background: rgb(50, 153, 187);
+    transition: all 0.5s ease;
+    text-align: center;
+}
+
+#selectedBuilding {
+    background: rgba(22, 184, 22, 0.61);
+}
+
+#building:focus {
+    background: rgba(126, 142, 148, 0.61);
+}
+#building:active {
+    background: rgba(126, 142, 148, 0.61);
+}
+#building:hover {
+    background: rgba(7, 66, 85, 0.8);
 }

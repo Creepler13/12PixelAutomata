@@ -8,24 +8,45 @@ module.exports = class BuildingTab extends React.Component {
 
     render() {
         let tab = (
-            <div>
-                <h1>{this.props.tab}</h1>
-                <ul>{this.props.buildings.map((building) => this.button(building))}</ul>
+            <div id="buildingsTab">
+                <a>{this.props.tab}</a>
+                <ul id="buildingList">
+                    {this.props.buildings.map((building) => this.building(building))}
+                </ul>
             </div>
         );
 
         return tab;
     }
 
-    button(buildingID) {
+    building(buildingID) {
         /** @type {import("../tiles/Building").BuildingData} */
-        let building = window.gameData[buildingID];
+        let building = window.gameData.buildings[buildingID];
 
         return (
-            <li key={buildingID + "_btn"}>
-                <button onClick={()=>(window.selectedBuilding = buildingID)}>{buildingID}</button>
-                <h3>Test</h3>
+            <li id="buildingListEntry" key={buildingID + "_btn"}>
+                <div id="building" onClick={() => {(window.selectedBuilding = buildingID);}}>
+                    <img src={window.gameData.buildings[buildingID].texture.src} />
+                    <a>{buildingID}</a>
+                    {this.getmaterialCostEmbed(building)}
+                </div>
             </li>
+        );
+    }
+
+    getmaterialCostEmbed(building) {
+        console.log(building);
+        return (
+            <div className="buildingCost">
+                {Object.keys(building.cost).map((material) => {
+                    return (
+                        <div>
+                            <img src={window.gameData.materials[material].texture.src} />
+                            <a>{building.cost[material]}</a>
+                        </div>
+                    );
+                })}
+            </div>
         );
     }
 };

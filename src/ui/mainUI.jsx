@@ -16,10 +16,12 @@ function makeBuildingSelect() {
     });
 
     let buildingSelect = (
-        <div>
+        <div id="buildingTabs">
+            <a>Buildings</a>
+            <div id="buildingTabsUL">
             {Object.keys(tabs).map((tab) => (
                 <BuildingTab tab={tab} buildings={tabs[tab]} />
-            ))}
+            ))}</div>
         </div>
     );
     return buildingSelect;
